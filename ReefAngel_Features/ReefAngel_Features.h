@@ -31,7 +31,7 @@ during water changes and feeding modes.
 
 Approximately 346 bytes to have this feature
 */
-#define DisplayImages  // do we display the graphics for feeding or water change mode
+//#define DisplayImages  // do we display the graphics for feeding or water change mode
 
 /*
 The next line is for displaying the setup screens to configure the values for the Feeding Mode timer and
@@ -120,7 +120,7 @@ When this or SetupExtras are defined, the Timeouts menu is included.
 Timeouts menu requires approximately 710 bytes
 This feature requires approximately 190 bytes if SetupExtras is defined
 */
-//#define ATOSetup
+#define ATOSetup
 
 /*
 This item will remove all lighting functionality from the controller.  It is the equivalent to
@@ -179,7 +179,7 @@ This is advisable since all settings can be updated via the wifi interface.
 
 Approximately 5000+ bytes to have this feature. This size can vary.
 */
-#define wifi
+//#define wifi
 
 /*
 This next line will control the displaying of all LED PWM related items.  The items it controls are:
@@ -222,7 +222,7 @@ The setup screens will show configurations for both switches.
 
 Approximately 454 bytes to have this feature
 */
-//#define SingleATOSetup
+#define SingleATOSetup
 
 /*
 If this next line is uncommented, you must include the following lines in
@@ -314,7 +314,7 @@ the Internal Memory values for them you must enable the features:
 
 Approximately 4566 bytes removed when using the Simplified Menu
 */
-#define SIMPLE_MENU
+//#define SIMPLE_MENU
 
 /*
 This option allows for the user to handle the menu in their PDE file
@@ -467,7 +467,7 @@ This option is called WDT_FORCE.
 Approximately 82 bytes to have Watchdog Enabled (WDT).
 */
 // Watchdog Timer
-//#define WDT
+#define WDT
 // Force Watchdog Timer - DO NOT ENABLE UNLESS TOLD TO DO SO
 //#define WDT_FORCE
 
@@ -575,6 +575,17 @@ Sun Location
 This feature enables the computation of the Sunrise and Sunset for specific GPS coordinates.  The
 default location is set to the Great Barrier Reef, Australia
 */
-//#define SUNLOCATION
+#define SUNLOCATION
+
+/*
+BayTech RPC14 Serial Control
+
+This will replace the standard Relay control with a BayTech RPC14
+power distribution swith controlled via RS-232.  This cannot be
+used at the same time as WiFi and you will get a reboot loop if
+wifi is defined
+
+*/
+#define BAYTECH
 
 #endif  // __REEFANGEL_FEATURES_H__
