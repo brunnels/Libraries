@@ -14,161 +14,161 @@
  * limitations under the License.
  */
 
- /*
-  * Updated by:  Curt Binder
-  * Updates Released under Apache License, Version 2.0
-  */
+/*
+ * Updated by:  Curt Binder
+ * Updates Released under Apache License, Version 2.0
+ */
 
 #include "RA_Joystick.h"
 #include <Globals.h>
 
 RA_JoystickClass::RA_JoystickClass()
 {
-	pinMode(okPin, INPUT);
+  pinMode(okPin, INPUT);
 #ifdef REEFANGEL_ONE
-	digitalWrite(okPin, LOW); //pull down resistor on okPin
+  digitalWrite(okPin, LOW); //pull down resistor on okPin
 #else	
-	digitalWrite(okPin, HIGH); //pull up resistor on okPin
+  digitalWrite(okPin, HIGH); //pull up resistor on okPin
 #endif //REEFANGEL_ONE
 }
 
 void RA_JoystickClass::Init()
 {
-	CalV = analogRead(VPin);
-	CalH = analogRead(HPin);
-	ButtonPress = 0;
-	KeyTurbo = 1;
-	KeyCount = 0;
+  CalV = analogRead(VPin);
+  CalH = analogRead(HPin);
+  ButtonPress = 0;
+  KeyTurbo = 1;
+  KeyCount = 0;
 #ifdef REEFANGEL_MINI	
-	ButtonDebounce=millis();
+  ButtonDebounce=millis();
 #endif // REEFANGEL_MINI	
 }
 
 bool RA_JoystickClass::IsButtonPressed()
 {
 #ifdef REEFANGEL_MINI
-	if (analogRead(VPin)>750 && analogRead(HPin)>750)
-	{
-		if (millis()-ButtonDebounce>600)
-		{
-			ButtonDebounce=millis();
-			ButtonPress++;
-		}
-	}
+  if (analogRead(VPin)>750 && analogRead(HPin)>750)
+  {
+    if (millis()-ButtonDebounce>600)
+    {
+      ButtonDebounce=millis();
+      ButtonPress++;
+    }
+  }
 #endif
-	if (ButtonPress > 0)
-	{
-		ButtonPress = 0;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  if (ButtonPress > 0)
+  {
+    ButtonPress = 0;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 bool RA_JoystickClass::IsUp()
 {
-	JoystickCenter();
+  JoystickCenter();
 #if defined REEFANGEL_ONE
-	if ( (analogRead(VPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ( (analogRead(VPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
-	if ( (analogRead(VPin)>750 && analogRead(HPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ( (analogRead(VPin)>750 && analogRead(HPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #else
-	if ( (analogRead(VPin)>CalV+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //defined REEFANGEL_ONE || defined REEFANGEL_MINI	
-	{
-		CheckTurbo();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  if ((analogRead(VPin) < CalV - 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
+  #endif //defined REEFANGEL_ONE || defined REEFANGEL_MINI
+  {
+    CheckTurbo();
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 bool RA_JoystickClass::IsDown()
 {
-	JoystickCenter();
+  JoystickCenter();
 #ifdef REEFANGEL_ONE
-	if ( (analogRead(HPin)<750 && analogRead(HPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ( (analogRead(HPin)<750 && analogRead(HPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
-	if ( (analogRead(HPin)>750 && analogRead(VPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ( (analogRead(HPin)>750 && analogRead(VPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #else	
-	if ( (analogRead(VPin)<CalV-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //REEFANGEL_ONE	
-	{
-		CheckTurbo();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  if ((analogRead(VPin) > CalV + 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
+  #endif //REEFANGEL_ONE
+  {
+    CheckTurbo();
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 bool RA_JoystickClass::IsRight()
 {
-	JoystickCenter();
+  JoystickCenter();
 #ifdef REEFANGEL_ONE
-	if ( (analogRead(HPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ( (analogRead(HPin)>750 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
-	if (false)
+  if (false)
 #else	
-	if ( (analogRead(HPin)<CalH-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //REEFANGEL_ONE	
-	{
-		CheckTurbo();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  if ((analogRead(HPin) > CalH + 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
+  #endif //REEFANGEL_ONE
+  {
+    CheckTurbo();
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 bool RA_JoystickClass::IsLeft()
 {
-	JoystickCenter();
+  JoystickCenter();
 #ifdef REEFANGEL_ONE
-	if ( (analogRead(VPin)<750 && analogRead(VPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ( (analogRead(VPin)<750 && analogRead(VPin)>250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #elif defined REEFANGEL_MINI
-	if (false)		
+  if (false)
 #else	
-	if ( (analogRead(HPin)>CalH+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
-#endif //REEFANGEL_ONE	
-	{
-		CheckTurbo();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+  if ((analogRead(HPin) < CalH - 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
+  #endif //REEFANGEL_ONE
+  {
+    CheckTurbo();
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void RA_JoystickClass::JoystickCenter()
 {
 #if defined REEFANGEL_ONE || defined REEFANGEL_MINI
-	if ( (analogRead(VPin)<10) &&
-         (analogRead(HPin)<10) )
+  if ( (analogRead(VPin)<10) &&
+    (analogRead(HPin)<10) )
 #else
-	if ( (analogRead(VPin)<CalV+70) &&
-         (analogRead(VPin)>CalV-70) &&
-         (analogRead(HPin)<CalH+70) &&
-         (analogRead(HPin)>CalH-70) )
-#endif //defined REEFANGEL_ONE || defined REEFANGEL_MINI
-	{
-		KeyCount = 0;
-		KeyTurbo = 1;
-		KeyKeep = 0;
-	}	
+    if ((analogRead(VPin) < CalV + 70) &&
+      (analogRead(VPin) > CalV - 70) &&
+      (analogRead(HPin) < CalH + 70) &&
+      (analogRead(HPin) > CalH - 70))
+  #endif //defined REEFANGEL_ONE || defined REEFANGEL_MINI
+  {
+    KeyCount = 0;
+    KeyTurbo = 1;
+    KeyKeep = 0;
+  }
 }
 
 void RA_JoystickClass::CheckTurbo()
 {
-	KeyCount++;
-	if (KeyCount > 5)
-        KeyTurbo = 5;
-    KeyKeep = millis();
+  KeyCount++;
+  if (KeyCount > 5)
+    KeyTurbo = 5;
+  KeyKeep = millis();
 }

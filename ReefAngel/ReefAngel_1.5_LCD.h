@@ -439,13 +439,15 @@ void ReefAngelClass::ShowInterface()
 			if ( Timer[LCD_TIMER].IsTriggered() )
 			{
 				// Screensaver timeout expired
-				LCD.BacklightOff();
+//				LCD.BacklightOff();
+			  LCD.Sleep();
 			}
 
 			if ( Joystick.IsButtonPressed() )
 			{
 				// turn the backlight on
-				LCD.BacklightOn();
+//				LCD.BacklightOn();
+			  LCD.Wake();
 
 				// TODO check Timer[LCD_TIMER] code
 				if ( Timer[LCD_TIMER].Trigger == 0 )
@@ -461,7 +463,8 @@ void ReefAngelClass::ShowInterface()
 			if ( Joystick.IsUp() || Joystick.IsDown() || Joystick.IsRight() || Joystick.IsLeft() )
 			{
 				// Turn backlight on
-				LCD.BacklightOn();
+//				LCD.BacklightOn();
+			  LCD.Wake();
 				Timer[LCD_TIMER].Start();
 			}
 

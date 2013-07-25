@@ -209,7 +209,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 //Analog I/O
 #define VPin                0
 #define HPin                1
-#define VBAT				2
+#define VBAT				        2
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
 //#define Piezo               16 
@@ -218,16 +218,16 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #ifdef REEFANGEL_MINI
 #define ledPin              6
 #else
-#define ledPin              7
+#define ledPin              13
 #endif //REEFANGEL_MINI
-#define tempPin             8
-#define actinicPWMPin       9
-#define daylightPWMPin      10
+#define tempPin             24
+#define actinicPWMPin       8
+#define daylightPWMPin      9
 #define lowATOPin           11
-#define highATOPin          12
-#define okPin               13
-#define SDPin				49
-#define HW_SPI_Pin			53
+#define highATOPin          7
+#define okPin               12
+#define SDPin				        49
+#define HW_SPI_Pin			    53
 
 // I2C Addresses
 #define I2CEEPROM1          0x50
@@ -459,8 +459,39 @@ When adding more variables, use the previous value plus 1 or 2
 #define Mem_B_SunsetHour          VarsStart+142
 #define Mem_B_SunsetMinute        VarsStart+143
 
-#define VarsEnd					  VarsStart+144
-// Next value starts VarsStart+144
+#define Mem_B_PWMSlopeStart6      VarsStart+144
+#define Mem_B_PWMSlopeEnd6        VarsStart+145
+#define Mem_B_PWMSlopeDuration6   VarsStart+146
+#define Mem_B_PWMSlopeStart7      VarsStart+147
+#define Mem_B_PWMSlopeEnd7        VarsStart+148
+#define Mem_B_PWMSlopeDuration7   VarsStart+149
+#define Mem_B_PWMSlopeStart8      VarsStart+150
+#define Mem_B_PWMSlopeEnd8        VarsStart+151
+#define Mem_B_PWMSlopeDuration8   VarsStart+152
+#define Mem_B_PWMSlopeStart9      VarsStart+153
+#define Mem_B_PWMSlopeEnd9        VarsStart+154
+#define Mem_B_PWMSlopeDuration9   VarsStart+155
+#define Mem_B_PWMSlopeStart10     VarsStart+156
+#define Mem_B_PWMSlopeEnd10       VarsStart+157
+#define Mem_B_PWMSlopeDuration10  VarsStart+158
+#define Mem_B_PWMSlopeStart11     VarsStart+159
+#define Mem_B_PWMSlopeEnd11       VarsStart+160
+#define Mem_B_PWMSlopeDuration11  VarsStart+161
+#define Mem_B_PWMSlopeStart12     VarsStart+162
+#define Mem_B_PWMSlopeEnd12       VarsStart+163
+#define Mem_B_PWMSlopeDuration12  VarsStart+164
+#define Mem_B_PWMSlopeStart13     VarsStart+165
+#define Mem_B_PWMSlopeEnd13       VarsStart+166
+#define Mem_B_PWMSlopeDuration13  VarsStart+167
+#define Mem_B_PWMSlopeStart14     VarsStart+168
+#define Mem_B_PWMSlopeEnd14       VarsStart+169
+#define Mem_B_PWMSlopeDuration14  VarsStart+170
+#define Mem_B_PWMSlopeStart15     VarsStart+171
+#define Mem_B_PWMSlopeEnd15       VarsStart+172
+#define Mem_B_PWMSlopeDuration15  VarsStart+173
+
+#define VarsEnd					  VarsStart+174
+// Next value starts VarsStart+174
 
 
 // EEProm Pointers
@@ -1300,6 +1331,9 @@ char* MoonPhaseLabel();
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
+int get8BitLuminanceValue(byte Percentage);
+int get12BitLuminanceValue(byte Percentage);
+int getLuminanceValue(int PwmMax, int Steps, byte Percentage);
 
 // 16bit CRC Calculation
 unsigned int crc16(int *ptr, byte len);

@@ -60,9 +60,12 @@ void ReefAngelClass::Init()
 	digitalWrite(highATOPin,HIGH); //pull up resistor on highATOPin
 #ifdef SUNLOCATION
   // Great Barrier Reef, Australia GMT +10
-  SunLocation.Init(-18.285833, 147.699722);
+//  SunLocation.Init(-18.285833, 147.699722);
   // Set the offset from GMT
-  SunLocation.SetOffset(10,0,10,0);
+//  SunLocation.SetOffset(10,0,10,0);
+  // APO Reef, Philippines GMT +8
+  SunLocation.Init(12.659851, 120.416679);
+  SunLocation.SetOffset(8,0,8,0);
 #endif  // SUNLOCATION
 	TempSensor.Init();
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
