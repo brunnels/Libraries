@@ -55,6 +55,22 @@ void RA_SunLocation::CheckAndUpdate()
       if (setTime / 60 != oldSetTime / 60) InternalMemory.SunsetHour_write(setTime / 60);
       if (setTime % 60 != oldSetTime % 60) InternalMemory.SunsetMinute_write(setTime % 60);
     }
+
+//    uint8_t srh = InternalMemory.SunriseHour_read();
+//    uint8_t srm = InternalMemory.SunriseMinute_read();
+//    uint8_t ssh = InternalMemory.SunsetHour_read();
+//    uint8_t ssm = InternalMemory.SunsetMinute_read();
+//
+//    Serial.print("Sunrise: ");
+//    Serial.print(srh);
+//    Serial.print(":");
+//    Serial.println(srm);
+//    Serial.print("Sunset: ");
+//    Serial.print(ssh);
+//    Serial.print(":");
+//    Serial.println(ssm);
+//
+//    Serial.println("");
   }
 }
 

@@ -126,6 +126,11 @@ class RA_PCA9685
     void ChannelPWMParabola(byte Channel, byte Start, byte End, byte MinuteOffset);
 
 #ifdef SUNLOCATION
+    void SetSunLocationSlopesForChannels(int Channels, uint8_t Start, uint8_t End, uint8_t Duration);
+    void SetSunLocationSlopesForChannels(int Channels, uint8_t Start, uint8_t End, uint8_t Duration, byte MinuteOffset);
+    void SetSunLocationParabolasForChannels(int Channels, uint8_t Start, uint8_t End);
+    void SetSunLocationParabolasForChannels(int Channels, uint8_t Start, uint8_t End, byte MinuteOffset);
+
     void SunLocationChannel0PWMSlope();
     void SunLocationChannel1PWMSlope();
     void SunLocationChannel2PWMSlope();

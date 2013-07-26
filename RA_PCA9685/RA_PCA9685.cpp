@@ -120,6 +120,50 @@ void RA_PCA9685::SetParabolasForChannels(int Channels, uint8_t Start, uint8_t En
   }
 }
 
+void RA_PCA9685::SetSunLocationSlopesForChannels(int Channels, uint8_t Start, uint8_t End, uint8_t Duration)
+{
+  for (int i = 0; i < 16; i++)
+  {
+    if (bitRead(Channels, i))
+    {
+      SunLocationChannelPWMSlope(i, Start, End, Duration);
+    }
+  }
+}
+
+void RA_PCA9685::SetSunLocationSlopesForChannels(int Channels, uint8_t Start, uint8_t End, uint8_t Duration, byte MinuteOffset)
+{
+  for (int i = 0; i < 16; i++)
+  {
+    if (bitRead(Channels, i))
+    {
+      SunLocationChannelPWMSlope(i, Start, End, Duration, MinuteOffset);
+    }
+  }
+}
+
+void RA_PCA9685::SetSunLocationParabolasForChannels(int Channels, uint8_t Start, uint8_t End)
+{
+  for (int i = 0; i < 16; i++)
+  {
+    if (bitRead(Channels, i))
+    {
+      SunLocationChannelPWMParabola(i, Start, End);
+    }
+  }
+}
+
+void RA_PCA9685::SetSunLocationParabolasForChannels(int Channels, uint8_t Start, uint8_t End, byte MinuteOffset)
+{
+  for (int i = 0; i < 16; i++)
+  {
+    if (bitRead(Channels, i))
+    {
+      SunLocationChannelPWMParabola(i, Start, End, MinuteOffset);
+    }
+  }
+}
+
 void RA_PCA9685::Write()
 {
   if (millis() - _lastWrite > 3000)

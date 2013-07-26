@@ -179,6 +179,9 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#ifdef SUNLOCATION
+	SunLocation.CheckAndUpdate();
+#endif  // SUNLOCATION
 	if (ChangeMode==FEEDING_MODE)
 		FeedingModeStart();
 	if (ChangeMode==WATERCHANGE_MODE)

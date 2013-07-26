@@ -1050,7 +1050,7 @@ void InternalEEPROMClass::DCPumpDuration_write(const uint8_t value)
 
 uint8_t InternalEEPROMClass::SunriseHour_read()
 {
-  return read(Mem_B_SunriseHour) - 1;
+  return read(Mem_B_SunriseHour);
 }
 
 void InternalEEPROMClass::SunriseHour_write(const uint8_t value)
@@ -1070,7 +1070,7 @@ void InternalEEPROMClass::SunriseMinute_write(const uint8_t value)
 
 uint8_t InternalEEPROMClass::SunsetHour_read()
 {
-  return read(Mem_B_SunsetHour) + 1;
+  return read(Mem_B_SunsetHour);
 }
 
 void InternalEEPROMClass::SunsetHour_write(const uint8_t value)

@@ -41,7 +41,7 @@ to change these values often (or at all), keep the next line commented out.
 
 Approximately 362 bytes to have this feature
 */
-//#define SetupExtras  // feeding mode & screensaver timeout setup. ACTIVATE WITH CAUTION
+#define SetupExtras  // feeding mode & screensaver timeout setup. ACTIVATE WITH CAUTION
 
 /*
 Since we may or may not need to always configure the Wavemakers, give the option to
@@ -587,5 +587,7 @@ wifi is defined
 
 */
 #define BAYTECH
+
+#define DATETIME24
 
 #endif  // __REEFANGEL_FEATURES_H__
