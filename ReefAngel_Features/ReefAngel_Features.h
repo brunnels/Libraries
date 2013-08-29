@@ -181,6 +181,8 @@ Approximately 5000+ bytes to have this feature. This size can vary.
 */
 //#define wifi
 
+
+#define ethernet
 /*
 This next line will control the displaying of all LED PWM related items.  The items it controls are:
 
@@ -586,7 +588,7 @@ used at the same time as WiFi and you will get a reboot loop if
 wifi is defined
 
 */
-#define BAYTECH
+//#define BAYTECH
 
 #define DATETIME24
 

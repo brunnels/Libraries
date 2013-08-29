@@ -57,8 +57,11 @@ class BayTechSerial
     void _parseTemperature(char * line);
     void _parseCircuitBreaker(char * line);
     void _parseOutletStatus(char * line);
+    void _iFlush();
 
     unsigned long _lastStatusUpdate;
+    unsigned long _timeout;
+    byte _tempOutletData;
     boolean _receiveComplete;
     boolean _statusPending;
     int _returnLength;

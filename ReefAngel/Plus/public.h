@@ -1,6 +1,5 @@
 // Plus
-
-DS1307RTC RTC;
+DS3231RTC RTC;
 RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
 

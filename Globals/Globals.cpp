@@ -20,6 +20,7 @@
   */
 
 #include "Globals.h"
+#include <Time.h>
 
 byte intlength(int intin)
 {
@@ -597,7 +598,7 @@ byte TideMode(byte WaveSpeed, byte minOffset, byte maxOffset)
 	moonOffset=((moonOffset+1)/2)*100; // Convert to percentage
 
 	// Find out the current tidal height
-	amplitude=sin(((2*PI)/wavelength)*now()); 
+	amplitude=sin(((2*PI)/wavelength)*now());
 
 	moonOffset=map(moonOffset,0,100,minOffset,maxOffset);
 	amplitude=amplitude*moonOffset; 

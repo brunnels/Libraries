@@ -30,7 +30,7 @@ RA_BayTech::RA_BayTech(void) :
   // assume relay is present till we hear otherwise.
   RelayPresent = true;
 #endif
-#ifdef RelayExp
+#ifdef RELAY_EXP
   for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
   {
     RelayDataE[EID] = 0;
@@ -40,7 +40,7 @@ RA_BayTech::RA_BayTech(void) :
     RelayPresentE[EID] = true;
 #endif  // SaveRelaysPresent
   }
-#endif  // RelayExp
+#endif  // RELAY_EXP
 }
 
 void RA_BayTech::Write(void)
@@ -121,7 +121,7 @@ void RA_BayTech::Write(void)
 #ifdef SaveRelaysPresent
   RelayPresent = (present == 0);
 #endif  // SaveRelaysPresent
-#ifdef RelayExp
+#ifdef RELAY_EXP
   for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
   {
     TempRelay = RelayDataE[EID];
@@ -134,6 +134,6 @@ void RA_BayTech::Write(void)
     RelayPresentE[EID] = (present == 0);
 #endif  // SaveRelaysPresent
   }
-#endif  // RelayExp
+#endif  // RELAY_EXP
 #endif  // RA_TOUCHDISPLAY
 }

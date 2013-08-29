@@ -21,9 +21,11 @@
 
 #include <Globals.h>
 #include <Wire.h>
-#include <DS1307RTC.h>
+#include <DS3231RTC.h>
 #include "ReefAngel.h"
+#ifdef wifi
 #include <RA_Wifi.h>
+#endif  // wifi
 byte ButtonPress = 0;
 
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -151,12 +153,15 @@ void ReefAngelClass::Init()
 	}
 #endif  // RelayExp
 
-#if defined wifi || defined I2CMASTER
+#if defined wifi || defined ethernet || defined I2CMASTER
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
 	EM1 = HUMbit + DCPumpbit;
-#ifdef wifi
+#if defined wifi || defined ethernet
 	portalusername="";
-#endif // wifi
+#endif // wifi || ethernet
+#if defined ethernet
+	ENC28J60.init();
+#endif  // ethernet
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
 	{
@@ -165,7 +170,8 @@ void ReefAngelClass::Init()
 #else  // RelayExp
 	REM = 0;
 #endif  // RelayExp
-#endif  // wifi
+#endif  // wifi || ethernet || I2CMASTER
+
 #ifdef CUSTOM_VARIABLES
 	for ( byte EID = 0; EID < 8; EID++ )
 	{
@@ -179,6 +185,9 @@ void ReefAngelClass::Refresh()
 #if defined WDT || defined WDT_FORCE
 	wdt_reset();
 #endif  // defined WDT || defined WDT_FORCE
+#ifdef ethernet
+	ENC28J60.processHTTP();
+#endif  // ethernet
 #ifdef SUNLOCATION
 	SunLocation.CheckAndUpdate();
 #endif  // SUNLOCATION
@@ -1243,6 +1252,12 @@ void ReefAngelClass::DisplayVersion()
 	// to be able to write functions to retrieve actual information
 	LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Wifi");
 #endif  // wifi
+#ifdef ethernet
+  // Display ethernet related information
+  // Place holder information currently, need ethernet module
+  // to be able to write functions to retrieve actual information
+  LCD.DrawText(ModeScreenColor,DefaultBGColor,10,30,"Ethernet");
+#endif  // ethernet
 #if defined WDT || defined WDT_FORCE
 	LCD.DrawText(ModeScreenColor,DefaultBGColor,40,30,"WDT");
 #endif

@@ -33,6 +33,16 @@
 
 static unsigned long RAStart;
 
+// ethernet interface mac address - must be unique on your network
+static byte ethMac[] = { 0x74,0x69,0x69,0x2D,0x30,0x31 };
+
+#if STATIC_IP
+// ethernet interface ip address
+static byte myip[] = { 192,168,1,200 };
+// gateway ip address
+static byte gwip[] = { 192,168,1,1 };
+#endif //  STATIC_IP
+
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany);
 void SendMaster(byte ID, byte data1, byte data2);
@@ -45,13 +55,12 @@ void receiveEventMaster(int howMany);
 
 #define RA_STANDARD // We start assuming it is a Standard Reef Angel
 
-#if defined(__AVR_ATmega2560__)
-#define wifi
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #define DateTimeSetup
 #define BUSCHECK
 #undef RA_STANDARD
 #define RA_PLUS
-#endif //__AVR_ATmega2560__
+#endif //__AVR_ATmega2560__ || __AVR_ATmega1280__
 
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #undef RA_STANDARD
@@ -228,28 +237,35 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define okPin               12
 #define SDPin				        49
 #define HW_SPI_Pin			    53
+#define ethSpiSlavePin      53
+
 
 // I2C Addresses
-#define I2CEEPROM1          0x50
-#define I2CEEPROM2          0x54
-#define I2CClock            0x68
+#define I2CEEPROM1          0x50 // EEPROM
+#define I2CEEPROM2          0x57 // RTC EEPROM
+#define I2CClock            0x68 // RTC
+
 #define I2CExpander1        0x20
 #define I2CExpander2        0x21
 #define I2CExpModule        0x38 // 0x38-3f
-#define I2CLeak				0X48
-#define I2CORP				0X4c
-#define I2CSalinity			0X4d
-#define I2CPH				0X4e
-#define I2CWaterLevel		0X4f
-#define I2CHumidity			0x5c
-#define I2CPWM				0x08
-#define I2CIO				0x09
-#define I2CRF				0X10
-#define I2CRA_Master		0x11
+#define I2CLeak				      0X48
+#define I2CORP				      0X4c
+#define I2CSalinity			    0X4d
+#define I2CPH				        0X4e
+#define I2CWaterLevel		    0X4f
+#define I2CHumidity			    0x5c
+#define I2CPWM				      0x08
+#define I2CIO				        0x09
+#define I2CRF				        0X10
+#define I2CRA_Master		    0x11
 #define I2CRA_TouchDisplay	0x12
-#define I2CTilt				0x1c
-#define I2CPWM_PCA9685		0x40
+#define I2CTilt				      0x1c
 
+#define I2CPWM_PCA9685		  0x5B  // PCA9685
+#define I2CECORAYL1         0x41
+#define I2CECORAYL2         0x43
+#define I2CECORAYR1         0x47
+#define I2CECORAYR2         0x48
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999

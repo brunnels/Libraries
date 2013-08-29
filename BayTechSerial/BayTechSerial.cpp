@@ -26,8 +26,26 @@ BayTechSerial::BayTechSerial(HardwareSerial &_bayTechSerial)
   _init();
 }
 
+void BayTechSerial::_iFlush()
+{
+  while(bayTechSerial->available()>0)
+  {
+    bayTechSerial->read();
+  }
+}
+
 boolean BayTechSerial::Available(void)
 {
+  if (!_receiveComplete && millis() - _timeout > 2000)
+  {
+    _timeout = millis();
+    _iFlush();
+    _receiveBuffer[_bufferCount++] = '\0';
+    _bufferCount = 0;
+    _receiveComplete = true;
+    return true;
+  }
+
   if (millis() - _lastStatusUpdate > 60000)
   {
     _lastStatusUpdate = millis();
@@ -53,44 +71,54 @@ void BayTechSerial::_init()
   bayTechSerial->begin(9600);
   _statusPending = false;
   _bufferCount = 0;
-  _lastStatusUpdate = 0;
+  _lastStatusUpdate = millis();
+  _timeout = millis();
   OutletData = 0;
+  _tempOutletData = 0;
   _receiveComplete = false;
   UpdateStatus();
 }
 
 void BayTechSerial::On(byte Outlet)
 {
-  OutletData |= 1 << Outlet;
+//  OutletData |= 1 << Outlet;
+  _tempOutletData |= 1 << Outlet;
   _returnLength = 12;
   _receiveComplete = false;
   bayTechSerial->print("on ");
   bayTechSerial->println(Outlet + 1);
+  _timeout = millis();
 }
 
 void BayTechSerial::Off(byte Outlet)
 {
-  bitClear(OutletData, Outlet);
+//  bitClear(OutletData, Outlet);
+  bitClear(_tempOutletData, Outlet);
   _returnLength = 13;
   _receiveComplete = false;
   bayTechSerial->print("off ");
   bayTechSerial->println(Outlet + 1);
+  _timeout = millis();
 }
 
 void BayTechSerial::AllOn(void)
 {
-  OutletData = 0xff;
+//  OutletData = 0xff;
+  _tempOutletData = 0xff;
   _returnLength = 10;
   _receiveComplete = false;
   bayTechSerial->println("on");
+  _timeout = millis();
 }
 
 void BayTechSerial::AllOff(void)
 {
-  OutletData = 0;
+//  OutletData = 0;
+  _tempOutletData = 0;
   _returnLength = 11;
   _receiveComplete = false;
   bayTechSerial->println("off");
+  _timeout = millis();
 }
 
 void BayTechSerial::Toggle(byte Outlet)
@@ -109,6 +137,7 @@ void BayTechSerial::UpdateStatus()
   _receiveComplete = false;
   _statusPending = true;
   bayTechSerial->println("status");
+  _timeout = millis();
 }
 
 boolean BayTechSerial::_serialReceive()
@@ -126,6 +155,7 @@ boolean BayTechSerial::_serialReceive()
       _receiveBuffer[_bufferCount++] = '\0';
       _bufferCount = 0;
       _receiveComplete = true;
+      OutletData = _tempOutletData;
       return true;
     }
   }

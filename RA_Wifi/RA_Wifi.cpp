@@ -1173,13 +1173,11 @@ void SendXMLData(bool fAtoLog /*= false*/)
 
 void CheckWifi(){};
 
-#endif  // wifi
-
 void pingSerial()
 {
-#if defined wifi && not defined NOWIFI
+#ifndef NOWIFI
     if ( WIFI_SERIAL.available() > 0 ) processHTTP();
-#endif  // wifi
+#endif  // NOWIFI
 }
 
 void PROGMEMprint(const prog_char str[])
@@ -1189,5 +1187,6 @@ void PROGMEMprint(const prog_char str[])
     while((c = pgm_read_byte(str++)))
         WIFI_SERIAL.write(c);
 }
+#endif  // wifi
 
 

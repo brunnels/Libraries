@@ -26,7 +26,7 @@ RA_PCA9685::RA_PCA9685(byte address)
   // initialize variables
   LightsOverride = false;
   _address = address;
-  _lastWrite = 0;
+  _lastWrite = millis();
 
   for (byte a = 0; a < 16; a++)
   {
@@ -166,7 +166,7 @@ void RA_PCA9685::SetSunLocationParabolasForChannels(int Channels, uint8_t Start,
 
 void RA_PCA9685::Write()
 {
-  if (millis() - _lastWrite > 3000)
+  if (millis() - _lastWrite > 1000)
   {
     _lastWrite = millis();
 

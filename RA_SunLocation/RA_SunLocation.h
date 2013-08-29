@@ -66,7 +66,6 @@ class RA_SunLocation
     char SunRise(unsigned long *when);
     char SunSet(unsigned long *when);
 
-  private:
     // sunrise and set calculations
     int m_SunriseHour;
     int m_SunriseMin;

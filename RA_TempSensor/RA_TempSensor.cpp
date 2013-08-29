@@ -22,7 +22,9 @@
 #include "RA_TempSensor.h"
 #include <Globals.h>
 #include <OneWire.h>
+#ifdef WIFI
 #include <RA_Wifi.h>
+#endif  // WIFI
 
 OneWire ds(tempPin);
 
@@ -60,11 +62,17 @@ void RA_TempSensorClass::SendRequest(byte addr[8])
 	if(addr[0]==0x28)
 	{
 		ds.reset();
+#ifdef WIFI
 		pingSerial();
+#endif  // WIFI
 		ds.select(addr);
-		pingSerial();
+#ifdef WIFI
+    pingSerial();
+#endif  // WIFI
 		ds.write(0x44,0);
-		pingSerial();
+#ifdef WIFI
+    pingSerial();
+#endif  // WIFI
 	}	
 }
 
@@ -82,11 +90,17 @@ int RA_TempSensorClass::ReadTemperature(byte addr[8])
 		{
 	//		count+=1;
 			ds.reset();
-			pingSerial();
+#ifdef WIFI
+    pingSerial();
+#endif  // WIFI
 			ds.select(addr);
-			pingSerial();
+#ifdef WIFI
+    pingSerial();
+#endif  // WIFI
 			ds.write(0xBE);
-			pingSerial();
+#ifdef WIFI
+    pingSerial();
+#endif  // WIFI
 			for (byte i = 0; i < 2; i++)
 			{	     // we need 9 bytes
 				data[i] = ds.read();

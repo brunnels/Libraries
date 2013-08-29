@@ -29,6 +29,7 @@
 #include <Time.h>
 #include <RA_ATO.h>
 #include <LED.h>
+#include <DS3231RTC.h>
 #include <RA_TempSensor.h>
 #ifndef BAYTECH
 #include <Relay.h>
@@ -67,6 +68,10 @@
 #ifdef SUNLOCATION
 #include <RA_SunLocation.h>
 #endif  // SUNLOCATION
+#ifdef ethernet
+#include <EtherCard.h>
+#include <RA_ENC28J60.h>
+#endif  // ethernet
 
 #ifdef RA_STANDARD
 #include <Standard/includes.h>
@@ -155,6 +160,9 @@ public:
 #ifdef SUNLOCATION
 	RA_SunLocation SunLocation;
 #endif  // SUNLOCATION
+#ifdef ethernet
+  RA_ENC28J60 ENC28J60;
+#endif  // ethernet
 	byte SelectedMenuItem;
 	byte DisplayedMenu;
 	bool showmenu;
@@ -320,8 +328,10 @@ public:
 	void Portal(char *username);
 	void Portal(char *username, char*key);
 	void SendPortal(char *username, char*key);
-	char *portalusername;
 #endif  // wifi
+#if defined wifi || defined ethernet
+  char *portalusername;
+#endif  // wifi || ethernet
 
 private:
 	time_t menutimeout;
