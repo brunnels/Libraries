@@ -23,7 +23,10 @@
 #include <Globals.h>
 #include <Time.h>
 #include "RA_NokiaLCD.h"
+#ifdef wifi
 #include <RA_Wifi.h>
+#endif  // wifi
+#include <ReefAngel.h>
 #include <Wire.h>
 #include <InternalEEPROM.h>
 #include <Memory.h>
@@ -602,7 +605,7 @@ const prog_uchar init_code_S6B33B[] PROGMEM = {
 RA_NokiaLCD::RA_NokiaLCD()
 {
 	LCDID=255;
-#if defined(__AVR_ATmega2560__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__) 
     pinMode(BL,OUTPUT);
     pinMode(CS,OUTPUT);
     pinMode(CLK,OUTPUT);
@@ -613,10 +616,10 @@ RA_NokiaLCD::RA_NokiaLCD()
     digitalWrite(CLK,HIGH);
     digitalWrite(SDA,HIGH);
     digitalWrite(RESET,HIGH);
-#else  // __AVR_ATmega2560__
+#else  // __AVR_ATmega2560__ || __AVR_ATmega1280__
     DDRD |= B01111100;   // Set SPI pins as output
     PORTD |= B01111000;  // Set SPI pins HIGH
-#endif  // __AVR_ATmega2560__
+#endif
 }
 
 
@@ -648,7 +651,7 @@ void RA_NokiaLCD::SendData(byte data)
     CLK1
     ShiftBits(data);
 #ifdef wifi
-    pingSerial();
+    ReefAngel.Network.ReceiveData();
 #endif  // wifi
 }
 
