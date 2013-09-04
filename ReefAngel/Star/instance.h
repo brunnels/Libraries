@@ -1,6 +1,9 @@
 // Plus
 
 ReefAngelClass::ReefAngelClass()
+#ifdef wifi
+:Network(WIFI_SERIAL)
+#endif  // wifi
 {
 	DDRJ=B00000110;
 	PORTJ=B11010000;

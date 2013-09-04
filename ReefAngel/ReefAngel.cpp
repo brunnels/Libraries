@@ -57,7 +57,6 @@ void ReefAngelClass::Init()
 #include <Evolution/init.h>
 #endif //  RA_STANDARD
 
-	WIFI_SERIAL.begin(57600);
 	pinMode(lowATOPin,INPUT);
 	pinMode(highATOPin,INPUT);
 	digitalWrite(lowATOPin,HIGH); //pull up resistor on lowATOPin
@@ -157,9 +156,7 @@ void ReefAngelClass::Init()
 #if defined wifi || defined I2CMASTER
 	EM = PWMEbit + RFEbit + AIbit + Salbit + ORPbit + IObit + PHbit + WLbit;
 	EM1 = HUMbit + DCPumpbit;
-#ifdef wifi
-	portalusername="";
-#endif // wifi
+
 #ifdef RelayExp
 	for (byte a=0;a<InstalledRelayExpansionModules;a++)
 	{
@@ -1234,230 +1231,24 @@ void ReefAngelClass::Wavemaker2(byte WMRelay)
 	//#endif
 }
 
-#ifdef wifi
-void ReefAngelClass::LoadWebBanner(int pointer, byte qty)
-{
-	//	webbannerpointer = pointer;
-	//	webbannerqty = qty;
-}
-
-void ReefAngelClass::Portal(char *username)
-{
-	/*
-	static byte LastRelayData;
-    byte TempRelay = Relay.RelayData;
-    TempRelay &= Relay.RelayMaskOff;
-    TempRelay |= Relay.RelayMaskOn;
-    if (TempRelay!=LastRelayData)
-    {
-    	Timer[PORTAL_TIMER].ForceTrigger();
-    	LastRelayData=TempRelay;
-    }
-#ifdef RelayExp
-	static byte LastRelayDataE[MAX_RELAY_EXPANSION_MODULES];
-
-    for ( byte EID = 0; EID < MAX_RELAY_EXPANSION_MODULES; EID++ )
-	{
-		TempRelay = Relay.RelayDataE[EID];
-		TempRelay &= Relay.RelayMaskOffE[EID];
-		TempRelay |= Relay.RelayMaskOnE[EID];
-	    if (TempRelay!=LastRelayDataE[EID])
-	    {
-	    	Timer[PORTAL_TIMER].ForceTrigger();
-	    	LastRelayDataE[EID]=TempRelay;
-	    }
-	}
-#endif  // RelayExp
-	 */
-	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,"");
-	portalusername=username;
-}
-
-void ReefAngelClass::Portal(char *username, char *key)
-{
-	if (Timer[PORTAL_TIMER].IsTriggered()) SendPortal(username,key);
-	portalusername=username;
-}
-
-void ReefAngelClass::SendPortal(char *username, char*key)
-{
-	Timer[PORTAL_TIMER].Start();
-	PROGMEMprint(BannerGET);
-	WIFI_SERIAL.print(Params.Temp[T1_PROBE], DEC);
-	PROGMEMprint(BannerT2);
-	WIFI_SERIAL.print(Params.Temp[T2_PROBE], DEC);
-	PROGMEMprint(BannerT3);
-	WIFI_SERIAL.print(Params.Temp[T3_PROBE], DEC);
-	PROGMEMprint(BannerPH);
-	WIFI_SERIAL.print(Params.PH, DEC);
-	PROGMEMprint(BannerID);
-	WIFI_SERIAL.print(username);
-	PROGMEMprint(BannerEM);
-	WIFI_SERIAL.print(EM, DEC);
-	PROGMEMprint(BannerEM1);
-	WIFI_SERIAL.print(EM1, DEC);
-	PROGMEMprint(BannerREM);
-	WIFI_SERIAL.print(REM, DEC);
-	PROGMEMprint(BannerKey);
-	WIFI_SERIAL.print(key);
-	PROGMEMprint(BannerAlertFlag);
-	WIFI_SERIAL.print(AlertFlags);
-	PROGMEMprint(BannerStatusFlag);
-	WIFI_SERIAL.print(StatusFlags);
-	PROGMEMprint(BannerATOHIGH);
-	WIFI_SERIAL.print(HighATO.IsActive(), DEC);
-	PROGMEMprint(BannerATOLOW);
-	WIFI_SERIAL.print(LowATO.IsActive(), DEC);
-	PROGMEMprint(BannerRelayData);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(Relay.RelayData, DEC);
-	PROGMEMprint(BannerRelayMaskOn);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(Relay.RelayMaskOn, DEC);
-	PROGMEMprint(BannerRelayMaskOff);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(Relay.RelayMaskOff, DEC);
-
-#ifdef RelayExp
-	for ( byte x = 0; x < InstalledRelayExpansionModules && x < MAX_RELAY_EXPANSION_MODULES; x++ )
-	{
-		PROGMEMprint(BannerRelayData);
-		WIFI_SERIAL.print(x+1, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(Relay.RelayDataE[x], DEC);
-		PROGMEMprint(BannerRelayMaskOn);
-		WIFI_SERIAL.print(x+1, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(Relay.RelayMaskOnE[x], DEC);
-		PROGMEMprint(BannerRelayMaskOff);
-		WIFI_SERIAL.print(x+1, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(Relay.RelayMaskOffE[x], DEC);
-	}  // for x
-#endif  // RelayExp
-#if defined DisplayLEDPWM && ! defined RemoveAllLights
-	PROGMEMprint(BannerPWMA);
-	WIFI_SERIAL.print(PWM.GetActinicValue(), DEC);
-	PROGMEMprint(BannerPWMD);
-	WIFI_SERIAL.print(PWM.GetDaylightValue(), DEC);
-	PROGMEMprint(BannerPWMAO);
-	WIFI_SERIAL.print(PWM.GetActinicOverrideValue(), DEC);
-	PROGMEMprint(BannerPWMDO);
-	WIFI_SERIAL.print(PWM.GetDaylightOverrideValue(), DEC);
-#endif  // DisplayLEDPWM && ! defined RemoveAllLights
-#ifdef PWMEXPANSION
-	for ( byte EID = 0; EID < PWM_EXPANSION_CHANNELS; EID++ )
-	{
-		PROGMEMprint(BannerPWME);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(PWM.GetChannelValue(EID), DEC);
-		PROGMEMprint(BannerPWME);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("O");
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(PWM.GetChannelOverrideValue(EID), DEC);
-	}
-#endif  // PWMEXPANSION
-#ifdef RFEXPANSION
-	PROGMEMprint(BannerRFM);
-	WIFI_SERIAL.print(RF.Mode, DEC);
-	PROGMEMprint(BannerRFS);
-	WIFI_SERIAL.print(RF.Speed, DEC);
-	PROGMEMprint(BannerRFD);
-	WIFI_SERIAL.print(RF.Duration, DEC);
-	PROGMEMprint(BannerRFW);
-	WIFI_SERIAL.print(RF.GetChannel(0), DEC);
-	PROGMEMprint(BannerRFRB);
-	WIFI_SERIAL.print(RF.GetChannel(1), DEC);
-	PROGMEMprint(BannerRFR);
-	WIFI_SERIAL.print(RF.GetChannel(2), DEC);
-	PROGMEMprint(BannerRFG);
-	WIFI_SERIAL.print(RF.GetChannel(3), DEC);
-	PROGMEMprint(BannerRFB);
-	WIFI_SERIAL.print(RF.GetChannel(4), DEC);
-	PROGMEMprint(BannerRFI);
-	WIFI_SERIAL.print(RF.GetChannel(5), DEC);
-#endif  // RFEXPANSION
-#ifdef AI_LED
-	PROGMEMprint(BannerAIW);
-	WIFI_SERIAL.print(AI.GetChannel(0), DEC);
-	PROGMEMprint(BannerAIB);
-	WIFI_SERIAL.print(AI.GetChannel(1), DEC);
-	PROGMEMprint(BannerAIRB);
-	WIFI_SERIAL.print(AI.GetChannel(2), DEC);
-#endif  // AI_LED
-#ifdef SALINITYEXPANSION
-	PROGMEMprint(BannerSal);
-	WIFI_SERIAL.print(Params.Salinity, DEC);
-#endif  // SALINITYEXPANSION
-#ifdef ORPEXPANSION
-	PROGMEMprint(BannerORP);
-	WIFI_SERIAL.print(Params.ORP, DEC);
-#endif  // ORPEXPANSION
-#ifdef PHEXPANSION
-	PROGMEMprint(BannerPHE);
-	WIFI_SERIAL.print(Params.PHExp, DEC);
-#endif  // PHEXPANSION
-#ifdef WATERLEVELEXPANSION
-	PROGMEMprint(BannerWL);
-	WIFI_SERIAL.print("=");
-	WIFI_SERIAL.print(WaterLevel.GetLevel(), DEC);
-	for ( byte EID = 1; EID < WATERLEVEL_CHANNELS; EID++ )
-	{
-		PROGMEMprint(BannerWL);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(WaterLevel.GetLevel(EID), DEC);
-	}
-#endif  // WATERLEVELEXPANSION
-#ifdef HUMIDITYEXPANSION
-	PROGMEMprint(BannerHumidity);
-	WIFI_SERIAL.print(Humidity.GetLevel(), DEC);
-#endif  // HUMIDITYEXPANSION
-#ifdef DCPUMPCONTROL
-	PROGMEMprint(BannerDCM);
-	WIFI_SERIAL.print(DCPump.Mode, DEC);
-	PROGMEMprint(BannerDCS);
-	WIFI_SERIAL.print(DCPump.Speed, DEC);
-	PROGMEMprint(BannerDCD);
-	WIFI_SERIAL.print(DCPump.Duration, DEC);
-#endif  // DCPUMPCONTROL
-#ifdef IOEXPANSION
-	PROGMEMprint(BannerIO);
-	WIFI_SERIAL.print(IO.GetChannel(), DEC);
-#endif  // IOEXPANSION
-#ifdef CUSTOM_VARIABLES
-	for ( byte EID = 0; EID < 8; EID++ )
-	{
-		PROGMEMprint(BannerCustomVar);
-		WIFI_SERIAL.print(EID, DEC);
-		WIFI_SERIAL.print("=");
-		WIFI_SERIAL.print(CustomVar[EID], DEC);
-	}
-#endif  // CUSTOM_VARIABLES
-	WIFI_SERIAL.println("\n\n");
-}
-#endif  // wifi
-
 void ReefAngelClass::FeedingModeStart()
 {
-	// turn off ports
-	Relay.RelayMaskOff &= ~FeedingModePorts;
+  // turn off ports
+  Relay.RelayMaskOff &= ~FeedingModePorts;
 #ifdef RelayExp
-	byte i;
-	for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
-	{
-		Relay.RelayMaskOffE[i] &= ~FeedingModePortsE[i];
-	}
+  byte i;
+  for ( i = 0; i < MAX_RELAY_EXPANSION_MODULES; i++ )
+  {
+    Relay.RelayMaskOffE[i] &= ~FeedingModePortsE[i];
+  }
 #endif  // RelayExp
-	CheckFeedingDrawing();
+  CheckFeedingDrawing();
 #ifdef RFEXPANSION
-	RF.SetMode(Feeding_Start,0,0);
+  RF.SetMode(Feeding_Start,0,0);
 #endif  // RFEXPANSION
-	Timer[FEEDING_TIMER].Start();  //Start Feeding Mode timer
-	// Tell controller what mode we are in
-	SetDisplayedMenu(FEEDING_MODE);
+  Timer[FEEDING_TIMER].Start();  //Start Feeding Mode timer
+  // Tell controller what mode we are in
+  SetDisplayedMenu(FEEDING_MODE);
 }
 
 void ReefAngelClass::WaterChangeModeStart()

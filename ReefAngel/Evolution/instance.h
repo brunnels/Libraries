@@ -1,6 +1,9 @@
 // Evolution
 
 ReefAngelClass::ReefAngelClass()
+#ifdef wifi
+:Network(WIFI_SERIAL)
+#endif  // wifi
 {
 }
 

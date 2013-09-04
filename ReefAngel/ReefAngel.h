@@ -35,6 +35,9 @@
 #include <Timer.h>
 #include <Memory.h>
 #include <DCPump.h>
+#ifdef wifi
+#include <RA_Wifi.h>
+#endif  // wifi
 #if defined ORPEXPANSION
 #include <ORP.h>
 #endif  // defined ORPEXPANSION
@@ -100,6 +103,9 @@ public:
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
 	RelayClass Relay;
+#ifdef wifi
+	RA_Wifi Network;
+#endif  // wifi
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights
@@ -307,16 +313,6 @@ public:
 #ifdef VersionMenu
 	void DisplayVersion();
 #endif  // VersionMenu
-
-	// WebBanner
-#ifdef wifi
-	void LoadWebBanner(int pointer, byte qty);
-	void WebBanner();
-	void Portal(char *username);
-	void Portal(char *username, char*key);
-	void SendPortal(char *username, char*key);
-	char *portalusername;
-#endif  // wifi
 
 private:
 	time_t menutimeout;

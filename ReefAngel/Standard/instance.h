@@ -1,6 +1,9 @@
 // Standard
 
 ReefAngelClass::ReefAngelClass()
+#ifdef wifi
+:Network(WIFI_SERIAL)
+#endif  // wifi
 {
 	PCMSK0 |= 32;
 	PCICR |= 1;
