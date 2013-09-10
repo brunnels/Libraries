@@ -22,7 +22,7 @@
 #include "RA_Wifi.h"
 #include <Globals.h>
 
-#include <DS1307RTC.h>
+#include <DS3231RTC.h>
 #include <ReefAngel.h>
 
 RA_Wifi::RA_Wifi()

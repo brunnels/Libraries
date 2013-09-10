@@ -41,7 +41,7 @@ to change these values often (or at all), keep the next line commented out.
 
 Approximately 362 bytes to have this feature
 */
-//#define SetupExtras  // feeding mode & screensaver timeout setup. ACTIVATE WITH CAUTION
+#define SetupExtras  // feeding mode & screensaver timeout setup. ACTIVATE WITH CAUTION
 
 /*
 Since we may or may not need to always configure the Wavemakers, give the option to
@@ -120,7 +120,7 @@ When this or SetupExtras are defined, the Timeouts menu is included.
 Timeouts menu requires approximately 710 bytes
 This feature requires approximately 190 bytes if SetupExtras is defined
 */
-//#define ATOSetup
+#define ATOSetup
 
 /*
 This item will remove all lighting functionality from the controller.  It is the equivalent to
@@ -222,7 +222,7 @@ The setup screens will show configurations for both switches.
 
 Approximately 454 bytes to have this feature
 */
-//#define SingleATOSetup
+#define SingleATOSetup
 
 /*
 If this next line is uncommented, you must include the following lines in
@@ -467,7 +467,7 @@ This option is called WDT_FORCE.
 Approximately 82 bytes to have Watchdog Enabled (WDT).
 */
 // Watchdog Timer
-//#define WDT
+#define WDT
 // Force Watchdog Timer - DO NOT ENABLE UNLESS TOLD TO DO SO
 //#define WDT_FORCE
 
@@ -568,5 +568,18 @@ You will have to add in this line above the ReefAngel.h include:
 Approximately 382 bytes to enable this feature
 */
 //#define AI_LED
+
+/*
+BayTech RPC14 Serial Control
+
+This will replace the standard Relay control with a BayTech RPC14
+power distribution swith controlled via RS-232.  This cannot be
+used at the same time as WiFi and you will get a reboot loop if
+wifi is defined
+
+*/
+#define BAYTECH
+
+#define DATETIME24
 
 #endif  // __REEFANGEL_FEATURES_H__

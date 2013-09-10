@@ -33,15 +33,42 @@
 #endif  // defined WDT || defined WDT_FORCE
 
 // Define Software SPI Pin Signal
-#define BL 2          // Digital 2 --> BL
-#define CS 3          // Digital 3 --> #CS
-#define CLK 4         // Digital 4 --> SCLK
-#define SDA 5         // Digital 5 --> SDATA
-#ifdef REEFANGEL_MINI
-#define RESET 7       // Digital 7 --> #RESET
-#else
-#define RESET 6       // Digital 6 --> #RESET
-#endif //REEFANGEL_MINI
+#define BL      4   // Digital 2 | PORTE --> BL
+#define CS      5   // Digital 3 | PORTE --> CS
+#define CLK     5   // Digital 4 | PORTG --> CLK
+#define SDATA   3   // Digital 5 | PORTE --> SDA
+#define RESET   3   // Digital 6 | PORTH --> Res
+
+#define LCD_PORT_BL   PORTE
+#define LCD_PORT_CS   PORTE
+#define LCD_PORT_CLK  PORTG
+#define LCD_PORT_SDA  PORTE
+#define LCD_PORT_RES  PORTH
+
+#define cbi(reg, bit) (reg&=~(1<<bit))
+#define sbi(reg, bit) (reg|= (1<<bit))
+
+#define BL0 cbi(LCD_PORT_BL,BL);
+#define BL1 sbi(LCD_PORT_BL,BL);
+#define CS0 cbi(LCD_PORT_CS,CS);
+#define CS1 sbi(LCD_PORT_CS,CS);
+#define CLK0 cbi(LCD_PORT_CLK,CLK);
+#define CLK1 sbi(LCD_PORT_CLK,CLK);
+#define SDA0 cbi(LCD_PORT_SDA,SDATA);
+#define SDA1 sbi(LCD_PORT_SDA,SDATA);
+#define RESET0 cbi(LCD_PORT_RES,RESET);
+#define RESET1 sbi(LCD_PORT_RES,RESET);
+
+// Define Software SPI Pin Signal
+//#define BL 2          // Digital 2 --> BL
+//#define CS 3          // Digital 3 --> #CS
+//#define CLK 4         // Digital 4 --> SCLK
+//#define SDA 5         // Digital 5 --> SDATA
+//#ifdef REEFANGEL_MINI
+//#define RESET 7       // Digital 7 --> #RESET
+//#else
+//#define RESET 6       // Digital 6 --> #RESET
+//#endif //REEFANGEL_MINI
 
 // Phillips PCF8833 Command Set
 #define NOP      0x00 	// nop
@@ -94,29 +121,29 @@
 #define RDID2    0xDB 	// read ID2
 #define RDID3    0xDC 	// read ID3
 
-#if defined(__AVR_ATmega2560__)
-#define BL0 cbi(PORTE,4);
-#define BL1 sbi(PORTE,4);
-#define CS0 cbi(PORTE,5);
-#define CS1 sbi(PORTE,5);
-#define CLK0 cbi(PORTG,5);
-#define CLK1 sbi(PORTG,5);
-#define SDA0 cbi(PORTE,3);
-#define SDA1 sbi(PORTE,3);
-#define RESET0 cbi(PORTH,3);
-#define RESET1 sbi(PORTH,3);
-#else  // __AVR_ATmega2560__
-#define CS0 cbi(PORTD,CS);
-#define CS1 sbi(PORTD,CS);
-#define CLK0 cbi(PORTD,CLK);
-#define CLK1 sbi(PORTD,CLK);
-#define SDA0 cbi(PORTD,SDA);
-#define SDA1 sbi(PORTD,SDA);
-#define RESET0 cbi(PORTD,RESET);
-#define RESET1 sbi(PORTD,RESET);
-#define BL0 cbi(PORTD,BL);
-#define BL1 sbi(PORTD,BL);
-#endif  // __AVR_ATmega2560__
+//#if defined(__AVR_ATmega2560__)
+//#define BL0 cbi(PORTE,4);
+//#define BL1 sbi(PORTE,4);
+//#define CS0 cbi(PORTE,5);
+//#define CS1 sbi(PORTE,5);
+//#define CLK0 cbi(PORTG,5);
+//#define CLK1 sbi(PORTG,5);
+//#define SDA0 cbi(PORTE,3);
+//#define SDA1 sbi(PORTE,3);
+//#define RESET0 cbi(PORTH,3);
+//#define RESET1 sbi(PORTH,3);
+//#else  // __AVR_ATmega2560__
+//#define CS0 cbi(PORTD,CS);
+//#define CS1 sbi(PORTD,CS);
+//#define CLK0 cbi(PORTD,CLK);
+//#define CLK1 sbi(PORTD,CLK);
+//#define SDA0 cbi(PORTD,SDA);
+//#define SDA1 sbi(PORTD,SDA);
+//#define RESET0 cbi(PORTD,RESET);
+//#define RESET1 sbi(PORTD,RESET);
+//#define BL0 cbi(PORTD,BL);
+//#define BL1 sbi(PORTD,BL);
+//#endif  // __AVR_ATmega2560__
 
 const prog_uchar font[] PROGMEM = {
 0x00 , 0x00 , 0x00 , 0x00 , 0x00 ,
@@ -602,7 +629,7 @@ const prog_uchar init_code_S6B33B[] PROGMEM = {
 RA_NokiaLCD::RA_NokiaLCD()
 {
 	LCDID=255;
-#if defined(__AVR_ATmega2560__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
     pinMode(BL,OUTPUT);
     pinMode(CS,OUTPUT);
     pinMode(CLK,OUTPUT);
@@ -613,10 +640,10 @@ RA_NokiaLCD::RA_NokiaLCD()
     digitalWrite(CLK,HIGH);
     digitalWrite(SDA,HIGH);
     digitalWrite(RESET,HIGH);
-#else  // __AVR_ATmega2560__
+#else  // __AVR_ATmega2560__ || __AVR_ATmega1280__
     DDRD |= B01111100;   // Set SPI pins as output
     PORTD |= B01111000;  // Set SPI pins HIGH
-#endif  // __AVR_ATmega2560__
+#endif  // __AVR_ATmega2560__ || __AVR_ATmega1280__
 }
 
 

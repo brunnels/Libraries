@@ -75,7 +75,7 @@ bool RA_JoystickClass::IsUp()
 #elif defined REEFANGEL_MINI
 	if ( (analogRead(VPin)>750 && analogRead(HPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #else
-	if ( (analogRead(VPin)>CalV+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ((analogRead(VPin) < CalV - 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
 #endif //defined REEFANGEL_ONE || defined REEFANGEL_MINI	
 	{
 		CheckTurbo();
@@ -95,7 +95,7 @@ bool RA_JoystickClass::IsDown()
 #elif defined REEFANGEL_MINI
 	if ( (analogRead(HPin)>750 && analogRead(VPin)<250 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
 #else	
-	if ( (analogRead(VPin)<CalV-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ((analogRead(VPin) > CalV + 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
 #endif //REEFANGEL_ONE	
 	{
 		CheckTurbo();
@@ -115,7 +115,7 @@ bool RA_JoystickClass::IsRight()
 #elif defined REEFANGEL_MINI
 	if (false)
 #else	
-	if ( (analogRead(HPin)<CalH-70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ((analogRead(HPin) > CalH + 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
 #endif //REEFANGEL_ONE	
 	{
 		CheckTurbo();
@@ -135,7 +135,7 @@ bool RA_JoystickClass::IsLeft()
 #elif defined REEFANGEL_MINI
 	if (false)		
 #else	
-	if ( (analogRead(HPin)>CalH+70 && (millis()-KeyKeep)>KeyPressRate/KeyTurbo) )
+  if ((analogRead(HPin) < CalH - 70 && (millis() - KeyKeep) > KeyPressRate / KeyTurbo))
 #endif //REEFANGEL_ONE	
 	{
 		CheckTurbo();

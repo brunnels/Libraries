@@ -30,12 +30,17 @@
 #include <RA_ATO.h>
 #include <LED.h>
 #include <RA_TempSensor.h>
+#ifndef BAYTECH
 #include <Relay.h>
+#else
+#include <BayTechSerial.h>
+#include <RA_BayTech.h>
+#endif // BAYTECH
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
 #include <DCPump.h>
-#include <DS1307RTC.h>
+#include <DS3231RTC.h>
 #ifdef wifi
 #include <RA_Wifi.h>
 #endif  // wifi
@@ -106,7 +111,11 @@ public:
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
+#ifndef BAYTECH
 	RelayClass Relay;
+#else
+	RA_BayTech Relay;
+#endif // BAYTECH
 #ifdef wifi
 	RA_Wifi Network;
 #endif  // wifi

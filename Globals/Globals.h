@@ -48,14 +48,14 @@ void receiveEventMaster(int howMany);
 
 #define RA_STANDARD // We start assuming it is a Standard Reef Angel
 
-#if defined(__AVR_ATmega2560__)
+#if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #define wifi
 #define DateTimeSetup
 #define BUSCHECK
 #define DisplayLEDPWM
 #undef RA_STANDARD
 #define RA_PLUS
-#endif //__AVR_ATmega2560__
+#endif //__AVR_ATmega2560__ || __AVR_ATmega1280__
 
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY
 #undef RA_STANDARD
@@ -233,7 +233,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 //Analog I/O
 #define VPin                0
 #define HPin                1
-#define VBAT				2
+#define VBAT								2
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
 //#define Piezo               16 
@@ -242,40 +242,40 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #ifdef REEFANGEL_MINI
 #define ledPin              6
 #else
-#define ledPin              7
+#define ledPin              13
 #endif //REEFANGEL_MINI
-#define tempPin             8
-#define actinicPWMPin       9
-#define daylightPWMPin      10
+#define tempPin             24
+#define actinicPWMPin       8
+#define daylightPWMPin      9
 #define lowATOPin           11
-#define highATOPin          12
-#define okPin               13
+#define highATOPin          7
+#define okPin               12
 #define daylight2PWMPin     45
 #define actinic2PWMPin      46
-#define SDPin				49
-#define HW_SPI_Pin			53
+#define SDPin								49
+#define HW_SPI_Pin					53
 
 // I2C Addresses
-#define I2CPWM				0x08
-#define I2CIO				0x09
-#define I2CRF				0X10
-#define I2CRA_Master		0x11
+#define I2CPWM							0x08
+#define I2CIO								0x09
+#define I2CRF								0X10
+#define I2CRA_Master				0x11
 #define I2CRA_TouchDisplay	0x12
-#define I2CTilt				0x1c
+#define I2CTilt							0x1c
 #define I2CExpander1        0x20
 #define I2CExpander2        0x21
 #define I2CIO_PCF8574       0x27
 #define I2CExpModule        0x38 // 0x38-3f
-#define I2CPWM_PCA9685		0x40
-#define I2CLeak				0X48
+#define I2CPWM_PCA9685			0x40
+#define I2CLeak							0X48
 #define I2CMultiWaterLevel	0X49
-#define I2CORP				0X4c
-#define I2CSalinity			0X4d
-#define I2CPH				0X4e
-#define I2CWaterLevel		0X4f
+#define I2CORP							0X4c
+#define I2CSalinity					0X4d
+#define I2CPH								0X4e
+#define I2CWaterLevel				0X4f
 #define I2CEEPROM1          0x50
-#define I2CEEPROM2          0x54
-#define I2CHumidity			0x5c
+#define I2CEEPROM2          0x57
+#define I2CHumidity					0x5c
 #define I2CClock            0x68
 
 
@@ -1343,6 +1343,9 @@ char* MoonPhaseLabel();
 // 16bit color alpha blend
 int alphaBlend(int fgcolor, byte a);
 int alphaBlend(int fgcolor, int bgcolor, byte a);
+int get8BitLuminanceValue(byte Percentage);
+int get12BitLuminanceValue(byte Percentage);
+int getLuminanceValue(int PwmMax, int Steps, byte Percentage);
 
 // 16bit CRC Calculation
 unsigned int crc16(int *ptr, byte len);
