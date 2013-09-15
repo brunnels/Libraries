@@ -1,6 +1,6 @@
 // Touch
 
-DS3231RTC RTC;
+DS1307RTC RTC;
 RA_TouchLCD TouchLCD;
 RA_TFT TFT;
 FontClass SmallFont;

@@ -30,23 +30,15 @@
 #include <RA_ATO.h>
 #include <LED.h>
 #include <RA_TempSensor.h>
-#ifndef BAYTECH
 #include <Relay.h>
-#else
-#include <BayTechSerial.h>
-#include <RA_BayTech.h>
-#endif // BAYTECH
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
 #include <DCPump.h>
-#include <DS3231RTC.h>
-#ifdef wifi
+#include <DS1307RTC.h>
+#if defined wifi || defined RA_STAR
 #include <RA_Wifi.h>
 #endif  // wifi
-#ifdef RA_STAR
-#include <RA_Star.h>
-#endif  // RA_STAR
 #if defined ORPEXPANSION
 #include <ORP.h>
 #endif  // defined ORPEXPANSION
@@ -111,16 +103,9 @@ public:
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
-#ifndef BAYTECH
 	RelayClass Relay;
-#else
-	RA_BayTech Relay;
-#endif // BAYTECH
 #ifdef wifi
 	RA_Wifi Network;
-#endif  // wifi
-#ifdef RA_STAR
-  RA_Star Network;
 #endif  // RA_STAR
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
@@ -253,8 +238,16 @@ public:
 	void UpdateTouchDisplay();
 #endif // I2CMASTER
 
+	void inline Use2014Screen() {};
+	void inline AddSalinityExpansion() {};
+	void inline AddORPExpansion() {};
+	void inline AddPHExpansion() {};
+	void inline AddWaterLevelExpansion() {};
+	void inline AddMultiChannelWaterLevelExpansion() {};
+	void inline AddHumidityExpansion() {};
 	void inline AddStandardMenu() {};
 	void inline AddWifi() {};
+	void inline AddRANet() {};
 	void inline AddDateTimeMenu() {};
 	void inline AddRFExpansion() {};
 	void inline AddCustomColors() {};
@@ -329,6 +322,11 @@ public:
 #ifdef VersionMenu
 	void DisplayVersion();
 #endif  // VersionMenu
+
+#if defined wifi || defined RA_STAR
+	void Portal(char *username);
+	void Portal(char *username, char *key);
+#endif
 
 private:
 	time_t menutimeout;

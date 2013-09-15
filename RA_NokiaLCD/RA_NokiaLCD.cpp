@@ -121,29 +121,29 @@
 #define RDID2    0xDB 	// read ID2
 #define RDID3    0xDC 	// read ID3
 
-//#if defined(__AVR_ATmega2560__)
-//#define BL0 cbi(PORTE,4);
-//#define BL1 sbi(PORTE,4);
-//#define CS0 cbi(PORTE,5);
-//#define CS1 sbi(PORTE,5);
-//#define CLK0 cbi(PORTG,5);
-//#define CLK1 sbi(PORTG,5);
-//#define SDA0 cbi(PORTE,3);
-//#define SDA1 sbi(PORTE,3);
-//#define RESET0 cbi(PORTH,3);
-//#define RESET1 sbi(PORTH,3);
-//#else  // __AVR_ATmega2560__
-//#define CS0 cbi(PORTD,CS);
-//#define CS1 sbi(PORTD,CS);
-//#define CLK0 cbi(PORTD,CLK);
-//#define CLK1 sbi(PORTD,CLK);
-//#define SDA0 cbi(PORTD,SDA);
-//#define SDA1 sbi(PORTD,SDA);
-//#define RESET0 cbi(PORTD,RESET);
-//#define RESET1 sbi(PORTD,RESET);
-//#define BL0 cbi(PORTD,BL);
-//#define BL1 sbi(PORTD,BL);
-//#endif  // __AVR_ATmega2560__
+#if defined(__AVR_ATmega2560__)  || defined(__AVR_ATmega1280__)
+#define BL0 cbi(PORTE,4);
+#define BL1 sbi(PORTE,4);
+#define CS0 cbi(PORTE,5);
+#define CS1 sbi(PORTE,5);
+#define CLK0 cbi(PORTG,5);
+#define CLK1 sbi(PORTG,5);
+#define SDA0 cbi(PORTE,3);
+#define SDA1 sbi(PORTE,3);
+#define RESET0 cbi(PORTH,3);
+#define RESET1 sbi(PORTH,3);
+#else  // __AVR_ATmega2560__
+#define CS0 cbi(PORTD,CS);
+#define CS1 sbi(PORTD,CS);
+#define CLK0 cbi(PORTD,CLK);
+#define CLK1 sbi(PORTD,CLK);
+#define SDA0 cbi(PORTD,SDA);
+#define SDA1 sbi(PORTD,SDA);
+#define RESET0 cbi(PORTD,RESET);
+#define RESET1 sbi(PORTD,RESET);
+#define BL0 cbi(PORTD,BL);
+#define BL1 sbi(PORTD,BL);
+#endif  // __AVR_ATmega2560__ || defined(__AVR_ATmega1280__)
 
 const prog_uchar font[] PROGMEM = {
 0x00 , 0x00 , 0x00 , 0x00 , 0x00 ,
@@ -682,9 +682,9 @@ void RA_NokiaLCD::SendCMD(byte data)
     SDA0
     CLK1
     ShiftBits(data);
-#ifdef wifi
+#if defined wifi || defined RA_STAR
     ReefAngel.Network.ReceiveData();
-#endif  // wifi
+#endif  // wifi || RA_STAR
 }
 
 
