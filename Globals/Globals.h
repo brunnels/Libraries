@@ -49,10 +49,10 @@ void receiveEventMaster(int howMany);
 #define RA_STANDARD // We start assuming it is a Standard Reef Angel
 
 #if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
-#define wifi
+//#define wifi
 #define DateTimeSetup
 #define BUSCHECK
-#define DisplayLEDPWM
+//#define DisplayLEDPWM
 #undef RA_STANDARD
 #define RA_PLUS
 #endif //__AVR_ATmega2560__ || __AVR_ATmega1280__

@@ -31,7 +31,7 @@ during water changes and feeding modes.
 
 Approximately 346 bytes to have this feature
 */
-#define DisplayImages  // do we display the graphics for feeding or water change mode
+//#define DisplayImages  // do we display the graphics for feeding or water change mode
 
 /*
 The next line is for displaying the setup screens to configure the values for the Feeding Mode timer and
@@ -129,7 +129,7 @@ This will OVERRIDE any of the other defines.  So use caution when enabling this 
 
 Approximately 2796 bytes to have this feature
 */
-//#define RemoveAllLights
+#define RemoveAllLights
 
 /*
 If you do not use metal halides and do not wish to have any of the setup screens on your controller,
@@ -179,7 +179,7 @@ This is advisable since all settings can be updated via the wifi interface.
 
 Approximately 5000+ bytes to have this feature. This size can vary.
 */
-#define wifi
+//#define wifi
 
 /*
 This next line will control the displaying of all LED PWM related items.  The items it controls are:
@@ -192,7 +192,7 @@ the next line and all that stuff will be removed.
 
 Approximately 720 bytes to have this feature
 */
-#define DisplayLEDPWM
+//#define DisplayLEDPWM
 
 /*
 PWM Expansion Device
@@ -314,7 +314,7 @@ the Internal Memory values for them you must enable the features:
 
 Approximately 4566 bytes removed when using the Simplified Menu
 */
-#define SIMPLE_MENU
+//#define SIMPLE_MENU
 
 /*
 This option allows for the user to handle the menu in their PDE file
@@ -581,5 +581,9 @@ wifi is defined
 #define BAYTECH
 
 #define DATETIME24
+
+#define DS3231
+
+#define RA_ENC28J60
 
 #endif  // __REEFANGEL_FEATURES_H__

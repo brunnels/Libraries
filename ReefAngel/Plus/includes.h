@@ -2,6 +2,11 @@
 
 #include <RA_NokiaLCD.h>
 #include <RA_Joystick.h>
+#ifdef DS3231
+#include <DS3231RTC.h>
+#else  // DS3231
+#include <DS1307RTC.h>
+#endif  // DS3231
 #include <avr/pgmspace.h>
 #include <avr/wdt.h>
 #define wdtenabled 1

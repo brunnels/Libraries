@@ -22,7 +22,11 @@
 #include <Globals.h>
 #if defined wifi || defined RA_STAR
 #include "RA_Wifi.h"
+#ifdef DS3231
+#include <DS3231RTC.h>
+#else  // DS3231
 #include <DS1307RTC.h>
+#endif  // DS3231
 #include <ReefAngel.h>
 
 RA_Wifi::RA_Wifi()

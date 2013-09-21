@@ -25,18 +25,18 @@ class RA_PCA9685
 {
   public:
     RA_PCA9685(byte address);
-    boolean LightsOverride;
 
-    byte PWMChannel[16];
-    byte PWMChannelOverride[16];
     void inline SetChannel(byte Channel, byte Value) { if (Channel < 16) PWMChannel[Channel] = Value; };
     void inline SetChannelOverride(byte Channel, byte Value) { if (Channel < 16) PWMChannelOverride[Channel] = Value; };
+
     void SetAllChannelsPercent(byte p);
     void SetChannelPercent(byte Channel, byte p);
     void SetPercentForChannels(int Channels, byte p);
+
     void SetSlopesForChannels(int Channels, uint8_t Start, uint8_t End, uint8_t Duration);
     void SetSlopesForChannels(uint8_t onHour, uint8_t onMinute, uint8_t offHour, uint8_t offMinute, int Channels, uint8_t Start, uint8_t End, uint8_t Duration);
     void SetSlopesForChannels(int Channels, uint8_t Start, uint8_t End, uint8_t Duration, uint8_t MinuteOffset);
+
     void SetParabolasForChannels(int Channels, uint8_t Start, uint8_t End);
     void SetParabolasForChannels(uint8_t onHour, uint8_t onMinute, uint8_t offHour, uint8_t offMinute, int Channels, uint8_t Start, uint8_t End);
     void SetParabolasForChannels(int Channels, uint8_t Start, uint8_t End, uint8_t MinuteOffset);
@@ -120,6 +120,9 @@ class RA_PCA9685
     void ChannelPWMParabola(byte Channel, uint8_t Start, uint8_t End);
     void ChannelPWMParabola(byte Channel, uint8_t Start, uint8_t End, uint8_t MinuteOffset);
     void ChannelPWMParabola(uint8_t onHour, uint8_t onMinute, uint8_t offHour, uint8_t offMinute, uint8_t Channel, uint8_t Start, uint8_t End);
+
+    byte PWMChannel[16];
+    byte PWMChannelOverride[16];
 
   private:
     byte _address;
