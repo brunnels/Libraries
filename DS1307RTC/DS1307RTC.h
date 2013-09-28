@@ -33,7 +33,7 @@ class DS1307RTC
     static uint8_t bcd2dec(uint8_t num);
 };
 
-extern DS1307RTC RTC;
+//extern DS1307RTC RTC;
 
 #endif
  

@@ -21,7 +21,11 @@
 
 #include <Globals.h>
 #include <Wire.h>
+#ifdef DS3231
+#include <DS3231RTC.h>
+#else
 #include <DS1307RTC.h>
+#endif  // DS3231
 #include "ReefAngel.h"
 
 byte ButtonPress = 0;

@@ -120,6 +120,6 @@ uint8_t DS1307RTC::bcd2dec(uint8_t num)
   return ((num/16 * 10) + (num % 16));
 }
 
-DS1307RTC RTC = DS1307RTC(); // create an instance for the user
+//DS1307RTC RTC = DS1307RTC(); // create an instance for the user
 
 #endif // __SAM3X8E__

@@ -22,7 +22,6 @@
 #include <Globals.h>
 #if defined wifi || defined ETH_WIZ5100
 #include "RA_Wifi.h"
-#include <DS1307RTC.h>
 #include <ReefAngel.h>
 
 RA_Wifi::RA_Wifi()
@@ -694,7 +693,7 @@ void RA_Wifi::ProcessHTTP()
 				ReefAngel.RTC_INTERNAL.set_date(mday, mon, weboption+2000);
 #else // RA_EVOLUTION
 				now();
-				RTC.set(now());
+				ReefAngel.RTC.set(now());
 #endif // RA_EVOLUTION
 			}
 			PROGMEMprint(XML_DATE_CLOSE);

@@ -33,15 +33,42 @@
 #endif  // defined WDT || defined WDT_FORCE
 
 // Define Software SPI Pin Signal
-#define BL 2          // Digital 2 --> BL
-#define CS 3          // Digital 3 --> #CS
-#define CLK 4         // Digital 4 --> SCLK
-#define SDA 5         // Digital 5 --> SDATA
-#ifdef REEFANGEL_MINI
-#define RESET 7       // Digital 7 --> #RESET
-#else
-#define RESET 6       // Digital 6 --> #RESET
-#endif //REEFANGEL_MINI
+#define BL      4   // Digital 2 | PORTE --> BL
+#define CS      5   // Digital 3 | PORTE --> CS
+#define CLK     5   // Digital 4 | PORTG --> CLK
+#define SDATA   3   // Digital 5 | PORTE --> SDA
+#define RESET   3   // Digital 6 | PORTH --> Res
+
+#define LCD_PORT_BL   PORTE
+#define LCD_PORT_CS   PORTE
+#define LCD_PORT_CLK  PORTG
+#define LCD_PORT_SDA  PORTE
+#define LCD_PORT_RES  PORTH
+
+#define cbi(reg, bit) (reg&=~(1<<bit))
+#define sbi(reg, bit) (reg|= (1<<bit))
+
+#define BL0 cbi(LCD_PORT_BL,BL);
+#define BL1 sbi(LCD_PORT_BL,BL);
+#define CS0 cbi(LCD_PORT_CS,CS);
+#define CS1 sbi(LCD_PORT_CS,CS);
+#define CLK0 cbi(LCD_PORT_CLK,CLK);
+#define CLK1 sbi(LCD_PORT_CLK,CLK);
+#define SDA0 cbi(LCD_PORT_SDA,SDATA);
+#define SDA1 sbi(LCD_PORT_SDA,SDATA);
+#define RESET0 cbi(LCD_PORT_RES,RESET);
+#define RESET1 sbi(LCD_PORT_RES,RESET);
+
+// Define Software SPI Pin Signal
+//#define BL 2          // Digital 2 --> BL
+//#define CS 3          // Digital 3 --> #CS
+//#define CLK 4         // Digital 4 --> SCLK
+//#define SDA 5         // Digital 5 --> SDATA
+//#ifdef REEFANGEL_MINI
+//#define RESET 7       // Digital 7 --> #RESET
+//#else
+//#define RESET 6       // Digital 6 --> #RESET
+//#endif //REEFANGEL_MINI
 
 #if defined(__AVR_ATmega2560__)  || defined(__AVR_ATmega1280__)
 #define bitOut(cond) PORTG = clk0; PORTE = (cond ? dat1 : dat0); PORTG = clk1

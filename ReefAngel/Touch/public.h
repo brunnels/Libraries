@@ -1,6 +1,10 @@
 // Touch
 
+#ifdef DS3231
+DS3231RTC RTC;
+#else
 DS1307RTC RTC;
+#endif  // DS3231
 RA_TouchLCD TouchLCD;
 RA_TFT TFT;
 FontClass SmallFont;

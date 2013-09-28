@@ -30,15 +30,31 @@
 #include <RA_ATO.h>
 #include <LED.h>
 #include <RA_TempSensor.h>
+#ifndef BAYTECH
 #include <Relay.h>
+#else
+#include <BayTechSerial.h>
+#include <RA_BayTech.h>
+#endif // BAYTECH
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
 #include <DCPump.h>
+#ifdef DS3231
+#include <DS3231RTC.h>
+#else
 #include <DS1307RTC.h>
+#endif  // DS3231
 #if defined wifi || defined RA_STAR
 #include <RA_Wifi.h>
 #endif  // wifi
+#ifdef RA_ENC28J60
+//#include <UIPEthernet.h>
+//#include <UIPServer.h>
+//#include <UIPClient.h>
+//#include <RA_Wifi.h>
+#include <RA_ENC28J60.h>
+#endif  // RA_ENC28J60
 #if defined ORPEXPANSION
 #include <ORP.h>
 #endif  // defined ORPEXPANSION
@@ -103,13 +119,20 @@ public:
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
-	RelayClass Relay;
+#ifndef BAYTECH
+  RelayClass Relay;
+#else
+  RA_BayTech Relay;
+#endif // BAYTECH
 #ifdef wifi
 	RA_Wifi Network;
 #endif  // wifi
 #ifdef ETH_WIZ5100
 	RA_Wiznet5100 Network;
 #endif // ETH_WIZ5100
+#ifdef RA_ENC28J60
+	RA_ENC28J60 Network;
+#endif  // RA_ENC28J60
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights

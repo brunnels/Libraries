@@ -1,6 +1,10 @@
 // Star
 
+#ifdef DS3231
+DS3231RTC RTC;
+#else
 DS1307RTC RTC;
+#endif  // DS3231
 RA_NokiaLCD LCD;
 RA_JoystickClass Joystick;
 RA_ATOALARMClass AlarmInput;
