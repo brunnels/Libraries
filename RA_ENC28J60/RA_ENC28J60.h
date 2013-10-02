@@ -22,16 +22,16 @@
 #ifndef __RA_ENC28J60_H__
 #define __RA_ENC28J60_H__
 
-#ifdef RA_ENC28J60
-//#include <SPI.h>
-#include <RA_Wifi.h>
+#ifdef ETH_ENC28J60
+#include <SPI.h>
 #include <UIPEthernet.h>
 #include <UIPServer.h>
 #include <UIPClient.h>
+#include <RA_Wifi.h>
 #include <avr/wdt.h>
 
 static UIPServer NetServer(2000);
-static byte NetMac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+static uint8_t NetMac[6] = { 0xBE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 static IPAddress NetIP(10,0,0,38);
 static IPAddress NetGateway(10,0,0,254);
 static IPAddress NetSubnet(255,255,255,0);
@@ -54,14 +54,14 @@ class RA_ENC28J60  : public RA_Wifi
 
 
   protected:
-    size_t write(uint8_t c);
-    size_t write(unsigned long n);
-    size_t write(long n);
-    size_t write(unsigned int n);
-    size_t write(int n);
-
+    using Print::write;
+    inline size_t write(uint8_t c) { return NetClient.write((uint8_t)c); }
+    inline size_t write(unsigned long n) { return NetClient.write((uint8_t)n); }
+    inline size_t write(long n) { return NetClient.write((uint8_t)n); }
+    inline size_t write(unsigned int n) { return NetClient.write((uint8_t)n); }
+    inline size_t write(int n) { return NetClient.write((uint8_t)n); }
 
 };
-#endif  // RA_ENC28J60
+#endif  // ETH_ENC28J60
 
 #endif  // __RA_ENC28J60_H__

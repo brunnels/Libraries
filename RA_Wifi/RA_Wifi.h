@@ -414,14 +414,14 @@ class RA_Wifi: public Print
     inline void pingSerial(){};
     char *portalusername;
 
-#ifndef ETH_WIZ5100
+#if !defined ETH_WIZ5100 && !defined ETH_ENC28J60
     using Print::write;
     inline size_t write(uint8_t c) { return _wifiSerial->write((uint8_t)c); }
     inline size_t write(unsigned long n) { return _wifiSerial->write((uint8_t)n); }
     inline size_t write(long n) { return _wifiSerial->write((uint8_t)n); }
     inline size_t write(unsigned int n) { return _wifiSerial->write((uint8_t)n); }
     inline size_t write(int n) { return _wifiSerial->write((uint8_t)n); }
-#endif // ETH_WIZ5100
+#endif // ETH_WIZ5100 && ETH_ENC28J60
 
   protected:
     char m_pushback[32];

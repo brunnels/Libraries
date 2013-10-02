@@ -45,16 +45,16 @@
 #else
 #include <DS1307RTC.h>
 #endif  // DS3231
-#if defined wifi || defined RA_STAR
+#if defined wifi || defined RA_STAR || defined ETH_ENC28J60
 #include <RA_Wifi.h>
 #endif  // wifi
-#ifdef RA_ENC28J60
+#ifdef ETH_ENC28J60
 //#include <UIPEthernet.h>
 //#include <UIPServer.h>
 //#include <UIPClient.h>
 //#include <RA_Wifi.h>
 #include <RA_ENC28J60.h>
-#endif  // RA_ENC28J60
+#endif  // ETH_ENC28J60
 #if defined ORPEXPANSION
 #include <ORP.h>
 #endif  // defined ORPEXPANSION
@@ -124,15 +124,15 @@ public:
 #else
   RA_BayTech Relay;
 #endif // BAYTECH
-#ifdef wifi
+#if defined wifi && !defined ETH_ENC28J60
 	RA_Wifi Network;
 #endif  // wifi
 #ifdef ETH_WIZ5100
 	RA_Wiznet5100 Network;
 #endif // ETH_WIZ5100
-#ifdef RA_ENC28J60
+#ifdef ETH_ENC28J60
 	RA_ENC28J60 Network;
-#endif  // RA_ENC28J60
+#endif  // ETH_ENC28J60
 #if defined DisplayLEDPWM && ! defined RemoveAllLights
 	RA_PWMClass PWM;
 #endif  // defined DisplayLEDPWM && ! defined RemoveAllLights

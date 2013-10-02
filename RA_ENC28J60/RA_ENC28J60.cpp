@@ -15,7 +15,7 @@
  */
 
 #include <Globals.h>
-//#ifdef RA_ENC28J60
+#ifdef ETH_ENC28J60
 #include "RA_ENC28J60.h"
 #include <SPI.h>
 #include <RA_Wifi.h>
@@ -33,6 +33,7 @@ RA_ENC28J60::RA_ENC28J60()
 void RA_ENC28J60::Init()
 {
   UIPEthernet.begin(NetMac, NetIP, NetDNS, NetGateway, NetSubnet); // Start Ethernet with DHCP polling enabled
+  NetServer.begin();
 //  Serial.print("My IP address: ");
 //  for (byte thisByte = 0; thisByte < 4; thisByte++) {
 //    // print the value of each byte of the IP address:
@@ -72,14 +73,31 @@ void RA_ENC28J60::Update()
 
 void RA_ENC28J60::ReceiveData()
 {
-  if (NetServer.available())
+  NetClient=NetServer.available();
+  if (NetClient)
   {
     while (NetClient.connected())
     {
+#if defined WDT || defined WDT_FORCE
       wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
       if ( NetClient.available() > 0 ) ProcessEthernet();
     }
   }
+//  if (RelayClient.available())
+//  {
+//    while (RelayClient.connected())
+//    {
+//#if defined WDT || defined WDT_FORCE
+//      wdt_reset();
+//#endif  // defined WDT || defined WDT_FORCE
+//      if (RelayClient.available()>54) // length of the return header of the HTTP upgrade
+//        RelayClient.find("\r\n\r\n"); // Discard header
+//      else
+//        RelayClient.read(); // Most likely HTTP/1.1 204, so we read one byte to cause timeout
+//      ProcessRelayEthernet();
+//    }
+//  }
 }
 
 void RA_ENC28J60::ProcessEthernet()
@@ -103,21 +121,23 @@ void RA_ENC28J60::ProcessEthernet()
       if (reqtype>0 && reqtype<128)
       {
         bIncoming=false;
-        while(NetClient.available()) NetClient.read();
+        while(NetClient.available())
+        {
+#if defined WDT || defined WDT_FORCE
+          wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+          NetClient.read();
+        }
       }
     }
   }
-
+#if defined WDT || defined WDT_FORCE
+  wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
   ProcessHTTP();
 
   NetClient.flush();
   NetClient.stop();
   m_pushbackindex=0;
 }
-
-size_t RA_ENC28J60::write(uint8_t c) { return NetClient.write((uint8_t)c); }
-size_t RA_ENC28J60::write(unsigned long n) { return NetClient.write((uint8_t)n); }
-size_t RA_ENC28J60::write(long n) { return NetClient.write((uint8_t)n); }
-size_t RA_ENC28J60::write(unsigned int n) { return NetClient.write((uint8_t)n); }
-size_t RA_ENC28J60::write(int n) { return NetClient.write((uint8_t)n); }
-//#endif
+#endif  // ETH_ENC28J60
