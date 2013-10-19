@@ -30,7 +30,12 @@
 #include <RA_ATO.h>
 #include <LED.h>
 #include <RA_TempSensor.h>
+#ifndef BAYTECH
 #include <Relay.h>
+#else
+#include <BayTechSerial.h>
+#include <RA_BayTech.h>
+#endif // BAYTECH
 #include <RA_PWM.h>
 #include <Timer.h>
 #include <Memory.h>
@@ -103,8 +108,12 @@ public:
 	RA_ATOHighClass HighATO;
 	RA_ATOLowClass LowATO;
 	RA_TempSensorClass TempSensor;
-	RelayClass Relay;
-#ifdef wifi
+#ifndef BAYTECH
+  RelayClass Relay;
+#else
+  RA_BayTech Relay;
+#endif // BAYTECH
+#if defined wifi && !defined ETH_ENC28J60
 	RA_Wifi Network;
 #endif  // wifi
 #ifdef ETH_WIZ5100
