@@ -24,16 +24,18 @@
 #define OverheatSetup
 #define ATOSetup
 #define WavemakerSetup
-#define InstalledRelayExpansionModules 2
+#define InstalledRelayExpansionModules 3
+#define KALKDOSER
+#define MetalHalideSetup
 #define I2C_SC16IS750_2 0x4C
 #define I2C_SC16IS750_1 0x48
+#define DISPLAY_TANK
 #define SC16IS750
-#define FONT_8x8
-#define MAIN_2014
-#define PHEXPANSION
+#define MULTIWATERLEVELEXPANSION
+#define RA_STAR
 #define RelayExp
-#define DateTimeSetup
 #define wifi
+#define RFEXPANSION
 #define VersionMenu
 #define WDT
 
