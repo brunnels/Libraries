@@ -106,9 +106,9 @@ const prog_char mainmenu_5_label[] PROGMEM = "Sal Calibration";
 #ifdef ORPEXPANSION
 const prog_char mainmenu_6_label[] PROGMEM = "ORP Calibration";
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 const prog_char mainmenu_7_label[] PROGMEM = "PH Exp Calibration";
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char mainmenu_8_label[] PROGMEM = "Water Calibration";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -133,9 +133,9 @@ PROGMEM const char * const mainmenu_items[] = {
 #ifdef ORPEXPANSION
 		mainmenu_6_label,
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 		mainmenu_7_label,
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		mainmenu_8_label,
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -161,9 +161,9 @@ enum MainMenuItem {
 #ifdef ORPEXPANSION
 	MainMenu_ORPCalibration,
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 	MainMenu_PHExpCalibration,
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION|| LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	MainMenu_WaterCalibration,
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -250,9 +250,9 @@ const prog_char setupmenu_4_label[] PROGMEM = "Calibrate Sal";
 #ifdef ORPEXPANSION
 const prog_char setupmenu_5_label[] PROGMEM = "Calibrate ORP";
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 const prog_char setupmenu_6_label[] PROGMEM = "Calibrate PH Exp";
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 const prog_char setupmenu_7_label[] PROGMEM = "Calibrate Water";
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -276,9 +276,9 @@ PROGMEM const char * const setupmenu_items[] = {
 #ifdef ORPEXPANSION
 		setupmenu_5_label,
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 		setupmenu_6_label,
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 		setupmenu_7_label,
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -303,9 +303,9 @@ enum SetupMenuItem {
 #ifdef ORPEXPANSION
 	SetupMenu_CalibrateORP,
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 	SetupMenu_PHExpCalibration,
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	SetupMenu_WaterCalibration,
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -1282,11 +1282,11 @@ void ReefAngelClass::Draw2014Main()
 			LCD.DrawLargeText(COLOR_WHITE,COLOR_SADDLEBROWN,x1[x]+12,y+4,"ORP");
 			CheckOffset(x,y);
 #endif // ORPEXPANSION
-#if defined PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 			LCD.Clear(COLOR_DARKGREEN,x1[x],y,x2[x],y+13);
 			LCD.DrawLargeText(COLOR_WHITE,COLOR_DARKGREEN,x1[x]+12,y+4,"pHE");
 			CheckOffset(x,y);
-#endif // PHEXPANSION
+#endif // PHEXPANSION || LEOPHI
 #if defined HUMIDITYEXPANSION
 			LCD.Clear(COLOR_PLUM,x1[x],y,x2[x],y+13);
 			LCD.DrawLargeText(COLOR_WHITE,COLOR_PLUM,x1[x]+12,y+4,"HUM");
@@ -1584,10 +1584,10 @@ void ReefAngelClass::Draw2014Main()
 		LCD.DrawCenterSingleMonitor(Params.ORP,COLOR_SADDLEBROWN,x3[x],y,1,1);
 		CheckOffset(x,y);
 #endif // ORPEXPANSION
-#if defined PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 		LCD.DrawCenterSingleMonitor(Params.PHExp,COLOR_DARKGREEN,x3[x],y,100,1);
 		CheckOffset(x,y);
-#endif // PHEXPANSION
+#endif // PHEXPANSION || LEOPHI
 #if defined HUMIDITYEXPANSION
 		LCD.DrawCenterSingleMonitor(Humidity.GetLevel(),COLOR_PLUM,x3[x],y,10,1);
 		CheckOffset(x,y);
@@ -2569,13 +2569,13 @@ void ReefAngelClass::ProcessButtonPressMain()
 		break;
 	}
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 	case MainMenu_PHExpCalibration:
 	{
 		SetupCalibratePHExp();
 		break;
 	}
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case MainMenu_WaterCalibration:
 	{
@@ -2737,13 +2737,13 @@ void ReefAngelClass::ProcessButtonPressSetup()
 		break;
 	}
 #endif  // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 	case SetupMenu_PHExpCalibration:
 	{
 		SetupCalibratePHExp();
 		break;
 	}
-#endif  // PHEXPANSION
+#endif  // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case SetupMenu_WaterCalibration:
 	{
@@ -3559,7 +3559,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 		bDone = false;
 		bRedraw = true;
 		bDrawButtons = true;
-		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");		
+		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate pH");
 		LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW*6, "pH");
 
 		strcpy(msg, b==0 ? "First value\0" : "Second value\0");
@@ -3646,7 +3646,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 					{
 						iTarget[b] = maxPh;
 					}
-					else 
+					else
 					{
 						bRedraw = true;
 					}
@@ -3671,7 +3671,7 @@ void ReefAngelClass::SetupCalibrateChoicePH()
 					{
 						iTarget[b] = minPh;
 					}
-					else 
+					else
 					{
 						bRedraw = true;
 					}
@@ -3970,6 +3970,164 @@ void ReefAngelClass::SetupCalibratePHExp()
 	}
 }
 #endif  // PHEXPANSION
+
+#ifdef LEOPHI
+void ReefAngelClass::SetupCalibratePHExp()
+{
+  enum choices {
+    PHCALVAL,
+    CANCEL,
+    OK
+  };
+  byte sel = CANCEL;
+
+  bool bSave = false;
+  bool bDone = false;
+  bool bRedraw = true;
+  bool bDrawButtons = true;
+  byte offset = 65;
+  int phVal=4;
+
+  // draw labels
+  ClearScreen(DefaultBGColor);
+  DisplayedMenu=WL_CALIBRATE_MENU;
+
+    bOKSel=false;
+    bDone = false;
+    bDrawButtons = true;
+    LCD.DrawText(DefaultFGColor, DefaultBGColor, MENU_START_COL, MENU_START_ROW, "Calibrate LeoPhi");
+
+    do
+    {
+#if defined WDT || defined WDT_FORCE
+      wdt_reset();
+#endif  // defined WDT || defined WDT_FORCE
+#if defined wifi || defined ETH_WIZ5100
+      ReefAngel.Network.ReceiveData();
+#endif  // wifi
+      LCD.DrawCalibrate(PH.Read(), MENU_START_COL + offset, MENU_START_ROW*5);
+      if (  bRedraw )
+      {
+        switch ( sel )
+        {
+          case PHCALVAL:
+          {
+            LCD.DrawOption(phVal, 1, MENU_START_COL + offset, MENU_START_ROW*7, "", "", 2);
+            if ( bDrawButtons )
+            {
+              LCD.DrawOK(false);
+              LCD.DrawCancel(false);
+            }
+            break;
+          }
+
+          case OK:
+          {
+            if ( bDrawButtons )
+            {
+              LCD.DrawOption(phVal, 0, MENU_START_COL + offset, MENU_START_ROW*7, "", "", 2);
+              LCD.DrawOK(true);
+              LCD.DrawCancel(false);
+            }
+            break;
+          }
+
+          case CANCEL:
+          {
+            if ( bDrawButtons )
+            {
+              LCD.DrawOption(phVal, 0, MENU_START_COL + offset, MENU_START_ROW*7, "", "", 2);
+              LCD.DrawOK(false);
+              LCD.DrawCancel(true);
+            }
+            break;
+          }
+        }
+        bRedraw = false;
+        bDrawButtons = false;
+      }
+
+      if ( Joystick.IsUp() )
+      {
+        if (sel == PHCALVAL)
+        {
+          switch(phVal)
+          {
+            case 4:
+              phVal = 10;
+              break;
+            case 7:
+              phVal = 4;
+              break;
+            case 10:
+              phVal = 7;
+              break;
+          }
+        }
+      }
+
+      if ( Joystick.IsDown() )
+      {
+        if (sel == PHCALVAL)
+        {
+          switch(phVal)
+          {
+            case 4:
+              phVal = 7;
+              break;
+            case 7:
+              phVal = 10;
+              break;
+            case 10:
+              phVal = 4;
+              break;
+          }
+        }
+      }
+
+      if ( Joystick.IsLeft() )
+      {
+        bRedraw = true;
+        bDrawButtons = true;
+        sel--;
+        if ( sel > OK )
+        {
+          sel = OK;
+        }
+
+      }
+
+      if ( Joystick.IsRight() )
+      {
+        bRedraw = true;
+        bDrawButtons = true;
+        sel++;
+        if ( sel > OK )
+        {
+          sel = PHCALVAL;
+        }
+      }
+
+      if ( Joystick.IsButtonPressed() )
+      {
+        if ( sel == OK)
+        {
+          bDone = true;
+        }
+        else if ( sel == CANCEL )
+        {
+          bDone = true;
+        }
+      }
+
+    } while ( ! bDone );
+
+  ClearScreen(DefaultBGColor);
+  DisplayedMenu=DEFAULT_MENU;
+  redrawmenu = true;
+  showmenu = false;
+}
+#endif  // LEOPHI
 
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void ReefAngelClass::SetupCalibrateWaterLevel()

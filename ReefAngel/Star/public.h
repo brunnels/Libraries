@@ -56,9 +56,9 @@ void SetupCalibrateORP();
 void ApplySalinityCompensation();
 void SetupCalibrateSalinity();
 #endif  // defined SALINITYEXPANSION
-#if defined PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 void SetupCalibratePHExp();
-#endif  // defined PHEXPANSION
+#endif  // defined PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 void SetupCalibrateWaterLevel();
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION

@@ -223,7 +223,7 @@ void ReefAngelClass::Refresh()
 #endif // RA_TOUCH
 		break;
 #endif // ORPEXPANSION
-#ifdef PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
 	case PHE_CALIBRATE_MENU:
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
 		SetupTouchCalibratePHExp();
@@ -231,7 +231,7 @@ void ReefAngelClass::Refresh()
 		SetupCalibratePHExp();
 #endif // RA_TOUCH
 		break;
-#endif // PHEXPANSION
+#endif // PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
 #if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
@@ -711,7 +711,7 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 	Params.Temp[T6_PROBE]=TempSensor.ReadTemperature(TempSensor.addrT6);
 	RefreshScreen();
-#endif // EXTRA_TEMP_PROBES	
+#endif // EXTRA_TEMP_PROBES
 #else  // DirectTempSensor
 	int x = TempSensor.ReadTemperature(TempSensor.addrT1);
 	RefreshScreen();
@@ -740,7 +740,7 @@ void ReefAngelClass::Refresh()
 	RefreshScreen();
 	y = x - Params.Temp[T6_PROBE];
 	if ( abs(y) < MAX_TEMP_SWING || Params.Temp[T6_PROBE] == 0 || ~x) Params.Temp[T6_PROBE] = x;
-#endif // EXTRA_TEMP_PROBES	
+#endif // EXTRA_TEMP_PROBES
 #endif  // DirectTempSensor
 	Params.PH=0;
 	for (int a=0;a<20;a++)
@@ -793,6 +793,10 @@ void ReefAngelClass::Refresh()
 	}
 	RefreshScreen();
 #endif  // defined PHEXPANSION
+#if defined LEOPHI
+  Params.PHExp=PH.Read();
+  RefreshScreen();
+#endif  // defined LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WaterLevel.Convert();
 	RefreshScreen();
@@ -954,7 +958,7 @@ void ReefAngelClass::ApplySalinityCompensation()
 }
 #endif  // SALINITYEXPANSION
 
-#ifdef BUSCHECK 
+#ifdef BUSCHECK
 boolean ReefAngelClass::isBusLock()
 {
 	return bitRead(AlertFlags, BusLockFlag);

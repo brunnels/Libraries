@@ -52,9 +52,13 @@
 #if defined SALINITYEXPANSION
 #include <Salinity.h>
 #endif  // defined SALINITYEXPANSION
-#if defined PHEXPANSION
+#if defined PHEXPANSION || defined LEOPHI
+#ifdef LEOPHI
+#include <RA_LeoPhi.h>
+#else
 #include <PH.h>
-#endif  // defined PHEXPANSION
+#endif  // LEOPHI
+#endif  // defined PHEXPANSION || LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 #include <WaterLevel.h>
 #endif  // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
@@ -150,7 +154,10 @@ public:
 #if defined PHEXPANSION
 	int PHExpMin, PHExpMax;
 	PHClass PH;
-#endif  // PHEXPANSION	
+#endif  // PHEXPANSION
+#if defined LEOPHI
+	RA_LeoPhi PH;
+#endif  // LEOPHI
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WaterLevelClass WaterLevel;
 	RA_ATOWLClass WLATO;
@@ -309,7 +316,7 @@ public:
 	void inline Star() {};
 	void inline Evolution() {};
 	void inline ChangeWifiPort() {};
-	
+
 #ifdef BUSCHECK
 	boolean isBusLock();
 #endif //BUSCHECK
@@ -326,7 +333,7 @@ public:
 
 	boolean isATOTimeOut();
 	boolean isOverheat();
-	
+
 	void StandardLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute);
 	void MHLights(byte LightsRelay, byte OnHour, byte OnMinute, byte OffHour, byte OffMinute, byte MHDelay);
 	void StandardHeater(byte HeaterRelay, int LowTemp, int HighTemp);
