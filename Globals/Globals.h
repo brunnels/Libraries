@@ -33,16 +33,16 @@
 #if defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1280__)
 #include <Ethernet.h>
 #include <EthernetDHCP.h>
+#include <SoftwareSerial.h>
 #endif
 #include <avr/pgmspace.h>
-
 
 static unsigned long RAStart;
 
 #ifdef RA_TOUCHDISPLAY
 void receiveEvent(int howMany);
 void SendMaster(byte ID, byte data1, byte data2);
-#endif RA_TOUCHDISPLAY
+#endif // RA_TOUCHDISPLAY
 
 #ifdef I2CMASTER
 void receiveEventMaster(int howMany);
@@ -110,22 +110,12 @@ void receiveEventMaster(int howMany);
 const prog_char NoIMCheck[] PROGMEM = "No Internal Memory";
 const prog_char NoIMCheck1[] PROGMEM = "Found";
 
-#ifdef __PLUS_SPECIAL_WIFI__
-#define WIFI_SERIAL Serial1
-#elif defined RA_STAR
-#define WIFI_SERIAL NetClient
-#else
-#define WIFI_SERIAL Serial
-#endif // __PLUS_SPECIAL_WIFI__
-
-#define RANET_SERIAL	Serial2
-
 // Board ids
 #define RA				0
 #define RAPlus			1
 #define RATouchDisplay	2
 #define RATouch			3
-#define	RAStar			4	
+#define	RAStar			4
 #define RAEvolution		5
 
 // Outlets on Relay box
@@ -163,19 +153,21 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 // Relay Box Modules
 #define MAX_RELAY_EXPANSION_MODULES     8
 #define PWM_EXPANSION_CHANNELS     		6
+#define SIXTEENCH_PWM_EXPANSION_CHANNELS     		16
 #define IO_EXPANSION_CHANNELS     		6
 #define AI_CHANNELS     				3
 #define RF_CHANNELS						6
+#ifndef EXTRA_TEMP_PROBES
+#define TEMP_PROBES						3
+#else
+#define TEMP_PROBES						6
+#endif
 
 #if defined MULTIWATERLEVELEXPANSION
 #define WATERLEVEL_CHANNELS       5
 #else  // MULTIWATERLEVELEXPANSION
 #define WATERLEVEL_CHANNELS       1
 #endif  // MULTIWATERLEVELEXPANSION
-
-// 8 Exp. Boxes, 1 Dimming
-// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + CR + LF = 26 bytes
-#define RANET_SIZE						26
 
 #ifdef RelayExp
 // Relay Expansion is defined in Features file
@@ -270,7 +262,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define LeakPin             5
 #define PHPin               6
 // issue #2 - Piezo Not needed anymore
-//#define Piezo               16 
+//#define Piezo               16
 
 //Digital I/O
 #define tempPin             8
@@ -298,6 +290,8 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define actinic2PWMPin      46
 #define BuzzerPin			48
 #define SDPin				49
+#define RANetRXPin			50
+#define RANetTXPin			52
 #ifdef REEFANGEL_MINI
 #define ledPin              6
 #else
@@ -317,6 +311,7 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CIO_PCF8574       0x27
 #define I2CExpModule        0x38 // 0x38-3f
 #define I2CPWM_PCA9685		0x40
+#define I2CPWM_16CH_PCA9685		0x41
 #define I2CLeak				0X48
 #define I2CMultiWaterLevel	0X49
 #define I2CPAR				0X4a
@@ -329,6 +324,32 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define I2CHumidity			0x5c
 #define I2CClock            0x68
 
+
+#ifdef __PLUS_SPECIAL_WIFI__
+#define WIFI_SERIAL Serial1
+#elif defined RA_STAR
+#define WIFI_SERIAL NetClient
+#else
+#define WIFI_SERIAL Serial
+#endif // __PLUS_SPECIAL_WIFI__
+
+#ifdef RANET
+#define RANET_SIZE						42
+// 8 Exp. Boxes, 1 Dimming
+// Seq + Size + 8 relay status + 8 relay fallback + 6 dimming channels + 16 dimming channels + CR + LF = 42 bytes
+static byte RANetSeq, RANetCRC;
+static byte RANetData[RANET_SIZE];
+static byte RANetStatus[RANET_SIZE];
+static unsigned long RANetlastmillis;
+
+#ifdef RA_STAR
+#define RANET_SERIAL	Serial2
+#elif defined RA_PLUS
+static SoftwareSerial RANetSerial(RANetRXPin,RANetTXPin);
+#define RANET_SERIAL	RANetSerial
+#endif // RA_STAR
+
+#endif // RANET
 
 // I2C Images Addresses
 #define I2CEEPROM2_Main              0     //0-2999
@@ -345,6 +366,9 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define T1_PROBE		1
 #define T2_PROBE		2
 #define T3_PROBE		3
+#define T4_PROBE		4
+#define T5_PROBE		5
+#define T6_PROBE		6
 
 // PWM Override IDs
 #define OVERRIDE_DAYLIGHT		0
@@ -366,7 +390,23 @@ const prog_char NoIMCheck1[] PROGMEM = "Found";
 #define OVERRIDE_RF_INTENSITY	16
 #define OVERRIDE_DAYLIGHT2		17
 #define OVERRIDE_ACTINIC2		18
-#define OVERRIDE_CHANNELS		19 // This is the last channel for if comparisons
+#define OVERRIDE_16CH_CHANNEL0		19
+#define OVERRIDE_16CH_CHANNEL1		20
+#define OVERRIDE_16CH_CHANNEL2		21
+#define OVERRIDE_16CH_CHANNEL3		22
+#define OVERRIDE_16CH_CHANNEL4		23
+#define OVERRIDE_16CH_CHANNEL5		24
+#define OVERRIDE_16CH_CHANNEL6		25
+#define OVERRIDE_16CH_CHANNEL7		26
+#define OVERRIDE_16CH_CHANNEL8		27
+#define OVERRIDE_16CH_CHANNEL9		28
+#define OVERRIDE_16CH_CHANNEL10		29
+#define OVERRIDE_16CH_CHANNEL11		30
+#define OVERRIDE_16CH_CHANNEL12		31
+#define OVERRIDE_16CH_CHANNEL13		32
+#define OVERRIDE_16CH_CHANNEL14		33
+#define OVERRIDE_16CH_CHANNEL15		34
+#define OVERRIDE_CHANNELS		35 // This is the last channel for if comparisons
 
 
 // Message IDs
@@ -920,8 +960,15 @@ Used by the RF Expansion Module
 #define Custom        11
 #define Slave_Start   97
 #define Slave_Stop    98
-#define None          99
+#define RF_None       99
 #define Radion        100
+
+/*
+ * Non-Vortech DC Pump modes added, using unused integers, else matched to U-App development
+ */
+#define Else		12
+#define Sine 		13
+#define Gyre		14
 
 // Radion Channels
 #define Radion_White      0
@@ -944,7 +991,7 @@ const byte RawChannel[]={67,65,66};
 
 // Parameters structure, moved from RA_NokiaLCD.h to a more central location
 typedef struct  {
-  int Temp[4];
+  int Temp[TEMP_PROBES+1];
   int PH;
   int Salinity;
   int ORP;
@@ -1250,6 +1297,7 @@ const prog_char EXP_RELAY_6_LABEL[] PROGMEM = "Exp. Relay Box 6";
 const prog_char EXP_RELAY_7_LABEL[] PROGMEM = "Exp. Relay Box 7";
 const prog_char EXP_RELAY_8_LABEL[] PROGMEM = "Exp. Relay Box 8";
 const prog_char PWM_EXPANSION_LABEL[] PROGMEM = "PWM Expansion";
+const prog_char SIXTEENCH_PWM_EXPANSION_LABEL[] PROGMEM = "16 Ch PWM Expansion";
 const prog_char RF_EXPANSION_LABEL[] PROGMEM = "RF Expansion";
 const prog_char RF_EXPANSION_LABEL1[] PROGMEM = "RF Expansion";
 const prog_char AI_LABEL[] PROGMEM = "Aqua Illumination";
@@ -1257,7 +1305,7 @@ const prog_char IO_EXPANSION_LABEL[] PROGMEM = "IO Expansion";
 const prog_char DCPUMP_LABEL[] PROGMEM = "DC Pump";
 const prog_char CVAR_LABEL[] PROGMEM = "Custom Variables";
 
-static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
+static PROGMEM const char *relay_items[] = {RELAY_BOX_LABEL, EXP_RELAY_1_LABEL, EXP_RELAY_2_LABEL, EXP_RELAY_3_LABEL, EXP_RELAY_4_LABEL, EXP_RELAY_5_LABEL, EXP_RELAY_6_LABEL, EXP_RELAY_7_LABEL, EXP_RELAY_8_LABEL, PWM_EXPANSION_LABEL, SIXTEENCH_PWM_EXPANSION_LABEL, RF_EXPANSION_LABEL, RF_EXPANSION_LABEL1, AI_LABEL, IO_EXPANSION_LABEL, DCPUMP_LABEL, CVAR_LABEL};
 
 // RF Modes
 const prog_char RF_CONSTANT[] PROGMEM = "Constant";
@@ -1398,6 +1446,12 @@ static PROGMEM const char *menu_button_items4[] = {MENU_BUTTON_WM, MENU_BUTTON_C
 #else
 	#define PARbit		0
 #endif  // PAREXPANSION
+#ifdef SIXTEENCHPWMEXPANSION
+	#define SCPWMbit		16
+#else
+	#define SCPWMbit		0
+#endif  // SIXTEENCHPWMEXPANSION
+
 
 // Global macros
 #define SIZE(array) (sizeof(array) / sizeof(*array))
@@ -1426,9 +1480,14 @@ void inline pingSerial() {};
 byte intlength(int intin);
 int NumMins(uint8_t ScheduleHour, uint8_t ScheduleMinute);
 bool IsLeapYear(int year);
+int PWMSlopeHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, int oldValue);
+int PWMParabolaHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue);
+int PWMSmoothRampHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, int oldValue);
+int PWMSigmoidHighRes(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, int oldValue);
 byte PWMSlope(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte Duration, byte oldValue);
 byte PWMParabola(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue);
-int PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, int startPWM, int endPWM, byte slopeLength, byte oldValue);
+byte PWMSmoothRamp(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte slopeLength, byte oldValue);
+byte PWMSigmoid(byte startHour, byte startMinute, byte endHour, byte endMinute, byte startPWM, byte endPWM, byte oldValue);
 byte PumpThreshold(byte value, byte threshold);
 byte MoonPhase();
 void ConvertNumToString(char* string, int num, byte decimal);
@@ -1446,6 +1505,7 @@ unsigned int crc16(int *ptr, byte len);
 //Wave Patterns
 byte ShortPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte LongPulseMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
+byte GyreMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte SineMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
 byte ReefCrestMode(byte WaveSpeed, byte WaveOffset, boolean PulseSync);
 byte NutrientTransportMode(byte PulseMinSpeed, byte PulseMaxSpeed, int PulseDuration, boolean PulseSync);
