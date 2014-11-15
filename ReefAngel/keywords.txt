@@ -16,6 +16,11 @@ NumMins	KEYWORD2
 PWMSlope	KEYWORD2
 PWMParabola	KEYWORD2
 PWMSmoothRamp	KEYWORD2
+PWMSigmoid	KEYWORD2
+PWMSlopeHighRes	KEYWORD2
+PWMParabolaHighRes	KEYWORD2
+PWMSmoothRampHighRes	KEYWORD2
+PWMSigmoidHighRes	KEYWORD2
 PumpThreshold	KEYWORD2
 MoonPhase	KEYWORD2
 ConvertNumToString	KEYWORD2
@@ -50,9 +55,11 @@ AddRANet	KEYWORD2
 AddSPILCD	KEYWORD2
 StandardLights	KEYWORD2
 AddRFExpansion	KEYWORD2
+Add16ChPWM	KEYWORD2
 AddDateTimeMenu	KEYWORD2
 AddCustomColors	KEYWORD2
 AddBusCheck	KEYWORD2
+AddExtraTempProbes	KEYWORD2
 Display24h	KEYWORD2
 ReverseATOLow   KEYWORD2
 ReverseATOHigh  KEYWORD2
@@ -725,4 +732,7 @@ ActinicChannel	LITERAL2
 FeedingSpeed	LITERAL2
 WaterChangeSpeed	LITERAL2
 
-IsLeakDetected	KEYWORD2	
+IsLeakDetected	KEYWORD2
+
+WifiAuthentication	KEYWORD2
+DDNS	KEYWORD2
