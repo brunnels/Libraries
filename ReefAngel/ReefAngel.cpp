@@ -90,8 +90,13 @@ void ReefAngelClass::Init()
 #endif // __AVR_ATmega2560__
 	TempSensor.Init();
 	RAStart=now();
+	LastFeedingMode=now();
+	LastWaterChangeMode=now();
 	LastStart = RAStart;  // Set the time normal mode is started
 	BusLocked=false;  // Bus is not locked
+	OldTempRelay=255;
+	OldDaylight=255;
+	OldActinic=255;
 	ChangeMode=0;
 	AlertFlags = 0;
 	StatusFlags = 0;
@@ -207,7 +212,7 @@ void ReefAngelClass::Refresh()
 		WaterChangeModeStart();
 		break;
 	case PH_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibratePH();
 #else
 		StartSetupCalibrateChoicePH();
@@ -215,7 +220,7 @@ void ReefAngelClass::Refresh()
 		break;
 #ifdef SALINITYEXPANSION
 	case SAL_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibrateSal();
 #else
 		StartSetupCalibrateSalinity();
@@ -224,7 +229,7 @@ void ReefAngelClass::Refresh()
 #endif // SALINITYEXPANSION
 #ifdef ORPEXPANSION
 	case ORP_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibrateORP();
 #else
 		SetupCalibrateORP();
@@ -233,7 +238,7 @@ void ReefAngelClass::Refresh()
 #endif // ORPEXPANSION
 #ifdef PHEXPANSION
 	case PHE_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibratePHExp();
 #else
 		StartSetupCalibrateChoicePHExp();
@@ -242,7 +247,7 @@ void ReefAngelClass::Refresh()
 #endif // PHEXPANSION
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	case WL_CALIBRATE_MENU:
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 		SetupTouchCalibrateWL();
 #else
 		SetupCalibrateWaterLevel();
@@ -326,11 +331,8 @@ void ReefAngelClass::Refresh()
 	}
 	case Else:
 	{
-		int offset = DCPump.Speed;
-		if (DCPump.Speed > 50) offset = 100 - DCPump.Speed;
-
-		SyncSpeed=ElseMode(DCPump.Speed,offset,true);
-		AntiSyncSpeed=ElseMode(DCPump.Speed,offset,false);
+		SyncSpeed=ElseMode(DCPump.Speed,DCPump.Duration,true);
+		AntiSyncSpeed=ElseMode(DCPump.Speed,DCPump.Duration,false);
 		break;
 	}
     }
@@ -353,7 +355,8 @@ void ReefAngelClass::Refresh()
 	SetDCPumpChannels(SyncSpeed,AntiSyncSpeed);
 #endif  // DCPUMPCONTROL
 
-#if defined DisplayLEDPWM && !defined REEFANGEL_MINI && !defined DCPUMPCONTROL
+#if defined DisplayLEDPWM && !defined REEFANGEL_MINI
+#ifndef DCPUMPCONTROL
 	if (LightRelayOn && LightsOverride)
 	{
 #if defined(__SAM3X8E__)
@@ -373,12 +376,20 @@ void ReefAngelClass::Refresh()
 #endif  // __SAM3X8E__
 #endif  // RA_STAR
 	}
+#endif // DCPUMPCONTROL
 	// issue #3: Redundant code
 	// issue #12: Revert back
 #if defined(__SAM3X8E__)
 	analogWrite(actinicPWMPin, map(VariableControl.GetActinicValueRaw(),0,4095,0,255));
 	analogWrite(daylightPWMPin, map(VariableControl.GetDaylightValueRaw(),0,4095,0,255));
 #else  // __SAM3X8E__
+#ifdef RA_PLUS
+	if (relaytest)
+	{
+		PWM.SetActinic((millis()%2000)/20);
+		PWM.SetDaylight(100-((millis()%2000)/20));
+	}
+#endif // RA_PLUS
 	analogWrite(actinicPWMPin, map(PWM.GetActinicValueRaw(),0,4095,0,255));
 	analogWrite(daylightPWMPin, map(PWM.GetDaylightValueRaw(),0,4095,0,255));
 #endif  // __SAM3X8E__
@@ -396,7 +407,7 @@ void ReefAngelClass::Refresh()
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 
 
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_EVOLUTION || defined RA_STAR
 	if (!Splash)
 	{
 #if not defined NOTILT
@@ -414,14 +425,8 @@ void ReefAngelClass::Refresh()
 		{
 			CalibrateTouchScreen();
 		}
-		if(SDFound)	TouchLCD.FullClear(BKCOLOR);
+		TouchLCD.FullClear(BKCOLOR);
 	}
-#if defined (__AVR_ATmega2560__)
-	if (PINJ&(1<<7)) // Check for bus lock
-		bitClear(AlertFlags,BusLockFlag);
-	else
-		bitSet(AlertFlags,BusLockFlag);
-#endif // (__AVR_ATmega2560__)
 #endif //  RA_TOUCH
 
 #if not defined RA_TOUCHDISPLAY
@@ -495,6 +500,14 @@ void ReefAngelClass::Refresh()
 #endif  // RelayExp
 #endif  // OVERRRIDE_PORTS
 
+#ifdef RA_PLUS
+	if (relaytest)
+	{
+		Relay.RelayData=0;
+		Relay.RelayMaskOff=255;
+		Relay.RelayMaskOn=1<<((millis()%3200)/400);
+	}
+#endif // RA_PLUS
 	Relay.Write();
 
 #ifdef ETH_WIZ5100
@@ -522,31 +535,40 @@ void ReefAngelClass::Refresh()
 			RANetData[10+a]=0;
 #endif // RelayExp
 		}
-		for (int a=0;a<PWM_EXPANSION_CHANNELS;a++)
+		for (int a=0;a<PWM_EXPANSION_CHANNELS*2;a=a+2)
 		{
 #ifdef PWMEXPANSION
 #if defined(__SAM3X8E__)
 			RANetData[18+a]=VariableControl.GetChannelValue(a);
 #else
-			RANetData[18+a]=PWM.GetChannelValue(a);
+			int newdata=PWM.GetChannelValueRaw(a/2);
+			RANetData[18+a]=newdata&0xff;	// LSB
+			RANetData[18+a+1]=newdata>>8;	// MSB
+			
 #endif
 #else
 			RANetData[18+a]=0;
+			RANetData[18+a+1]=0;
 #endif // PWMEXPANSION
 		}
-		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS;a++)
+		for (int a=0;a<SIXTEENCH_PWM_EXPANSION_CHANNELS*2;a=a+2)
 		{
 #ifdef SIXTEENCHPWMEXPANSION
 #if defined(__SAM3X8E__)
-			RANetData[24+a]=VariableControl.Get16ChannelValue(a);
+			RANetData[26+a]=VariableControl.Get16ChannelValue(a);
 #else
-			RANetData[24+a]=PWM.Get16ChannelValue(a);
+			int newdata=PWM.Get16ChannelValueRaw(a/2);
+			RANetData[30+a]=newdata&0xff;	// LSB
+			RANetData[30+a+1]=newdata>>8;	// MSB
 #endif
 #else
-			RANetData[24+a]=0;
+			RANetData[30+a]=0;
+			RANetData[30+a+1]=0;
 #endif // SIXTEENCHPWMEXPANSION
 		}
 //		char buf[3];
+		RANetData[62]=TriggerValue;	// Trigger byte
+		TriggerValue=0;				// Reset to 0
 		for (int a=0;a<RANET_SIZE-2;a++)
 		{
 			RANetCRC+=RANetData[a];
@@ -563,7 +585,7 @@ void ReefAngelClass::Refresh()
 #endif // RANET
 #if defined wifi || defined RA_STAR
     ReefAngel.Network.ReceiveData();
-#endif  // wifi || RA_STAR
+#endif  // wifi || defined RA_STAR
 
 	if (ds.read_bit()==0) return;  // ds for OneWire TempSensor
 	now();
@@ -686,26 +708,31 @@ void ReefAngelClass::Refresh()
 	Wire.write(0);
 	int a=Wire.endTransmission();
 	if (a==5)
+		BusLocked=true;  // Bus is locked
+	else
+		BusLocked=false;  // Bus is not locked
+	if (BusLocked)
 	{
 		LED.On();
 		delay(20);
 		LED.Off();
-		BusLocked=true;  // Bus is locked
 		bitSet(AlertFlags,BusLockFlag);
-#ifdef RA_STAR
 		sbi(PORTH,2); // Turn off exp bus power
-#endif // RA_STAR
 	}
 	else
 	{
-		BusLocked=false;  // Bus is not locked
 		bitClear(AlertFlags,BusLockFlag);
-#ifdef RA_STAR
 		cbi(PORTH,2); // Turn on exp bus power
-#endif // RA_STAR
 	}
-#endif
+#endif // BUSCHECK
 }
+
+#ifdef RANET
+void ReefAngelClass::RANetTrigger(byte Trigger)
+{
+	TriggerValue = Trigger;
+}
+#endif // RANET
 
 void ReefAngelClass::SetTemperatureUnit(byte unit)
 {
@@ -847,6 +874,7 @@ boolean ReefAngelClass::IsLeakDetected()
 	detect=iLeak>2000;
 #ifdef EMBEDDED_LEAK
 	detect|=analogRead(LeakPin)<400;
+	LeakValue=detect;
 #endif // EMBEDDED_LEAK
 #ifdef RA_TOUCHDISPLAY
 	detect=LeakStatus;
@@ -887,7 +915,7 @@ void ReefAngelClass::LeakClear()
 	}
 #endif  // RelayExp
 	Relay.Write();
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1611,7 +1639,7 @@ void ReefAngelClass::ATOClear()
 #if defined WATERLEVELEXPANSION || defined MULTIWATERLEVELEXPANSION
 	WLATO.StopTopping();
 #endif // WATERLEVELEXPANSION || MULTIWATERLEVELEXPANSION
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1659,7 +1687,7 @@ void ReefAngelClass::OverheatClear()
 	}
 #endif  // RelayExp
 	Relay.Write();
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
 #endif  // RA_TOUCH
@@ -1685,7 +1713,7 @@ void ReefAngelClass::LightsOn()
 #endif  // RelayExp
 	Relay.Write();
 	bitSet(StatusFlags,LightsOnFlag);
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	menu_button_functions1[4] = &ReefAngelClass::LightsOff;
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
@@ -1718,7 +1746,7 @@ void ReefAngelClass::LightsOff()
 #endif  // defined DisplayLEDPWM && !defined REEFANGEL_MINI
 	Relay.Write();
 	bitClear(StatusFlags,LightsOnFlag);
-#if defined RA_TOUCH || defined RA_TOUCHDISPLAY
+#if defined RA_TOUCH || defined RA_TOUCHDISPLAY || defined RA_STAR
 	menu_button_functions1[4] = &ReefAngelClass::LightsOn;
 	if (DisplayedMenu==TOUCH_MENU)
 		SetDisplayedMenu(DEFAULT_MENU);
@@ -1731,7 +1759,9 @@ void ReefAngelClass::LightsOff()
 void ReefAngelClass::ExitMenu()
 {
 	// Handles the cleanup to return to the main screen
+	if (bitRead(StatusFlags,FeedingFlag)) LastFeedingMode=now();
 	bitClear(StatusFlags,FeedingFlag);
+	if (bitRead(StatusFlags,WaterChangeFlag)) LastWaterChangeMode=now();
 	bitClear(StatusFlags,WaterChangeFlag);
 	WDTReset();
 	ClearScreen(DefaultBGColor);
@@ -2276,7 +2306,7 @@ void receiveEventMaster(int howMany)
 			{
 				if (d[1]<=OVERRIDE_CHANNEL5)
 					ReefAngel.PWM.Override(d[1],d[2]);
-				if (d[1]>=OVERRIDE_AI_WHITE && d[1]<=OVERRIDE_AI_BLUE)
+				if (d[1]>=OVERRIDE_AI_WHITE && d[1]<=OVERRIDE_AI_ROYALBLUE)
 					ReefAngel.AI.Override(d[1]-OVERRIDE_AI_WHITE,d[2]);
 				if (d[1]>=OVERRIDE_RF_WHITE && d[1]<=OVERRIDE_RF_INTENSITY)
 					ReefAngel.RF.Override(d[1]-OVERRIDE_RF_WHITE,d[2]);

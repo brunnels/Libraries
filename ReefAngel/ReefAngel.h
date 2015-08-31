@@ -43,7 +43,7 @@
 #include <DCPump.h>
 #endif  // DCPUMPCONTROL
 #include <DS1307RTC.h>
-#if defined wifi || defined RA_STAR
+#if defined wifi
 #include <RA_Wifi.h>
 #endif  // wifi
 #if defined ORPEXPANSION
@@ -93,8 +93,12 @@ public:
 	byte Board;
 	int PHMin,PHMax;
 	ParamsStruct Params;
+	ParamsStruct OldParams;
+	byte OldTempRelay, OldDaylight, OldActinic;
 	byte AlertFlags,StatusFlags;
 	bool BusLocked;
+	unsigned long LastFeedingMode;
+	unsigned long LastWaterChangeMode;
 
 	ReefAngelClass();
 
@@ -269,6 +273,9 @@ public:
 	void CheckDrawGraph();
 	void CheckFeedingDrawing();
 	void CheckWaterChangeDrawing();
+#ifdef RANET
+	void RANetTrigger(byte TriggerValue);
+#endif // RANET
 #ifdef DCPUMPCONTROL
 	void SetDCPumpChannels(byte SyncSpeed,byte AntiSyncSpeed);
 #endif //DCPUMPCONTROL
@@ -331,6 +338,7 @@ public:
 	void LeakCheck();
 	void LeakClear();
 	boolean isLeak();
+	byte LeakValue;
 #endif  // LEAKDETECTOREXPANSION
 
 	boolean isATOTimeOut();
